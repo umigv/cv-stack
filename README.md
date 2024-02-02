@@ -5,6 +5,7 @@ Current:
 Discuss with Chris:
 - pubish rate (0.5 seconds)
 - how to publish occupancy grid as message (combining publisher method file and drivable lane .py)
+- size of pixels
 
 Next Steps: 
 - Figure out how to parse ZED input to just recieve left frame
