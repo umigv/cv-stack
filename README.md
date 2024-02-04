@@ -3,8 +3,9 @@ Current:
 - established bare bones subscriber + publisher nodes
 
 Discuss with Chris:
-- pubish rate (0.5 seconds)
+- pubish rate (0.5 seconds) -- leave as a parameter 
 - how to publish occupancy grid as message (combining publisher method file and drivable lane .py)
+      --- nav occupancy grid message (contains a header -- timestamp etc., data -- as an array)
 - size of pixels
 
 Next Steps: 
@@ -18,3 +19,5 @@ Goals:
 
 Notes:
 - 0.05 x 0.05 m grid size for occupancy grid
+- add padding to include position of robot in numpy occupancy grid
+- header data of occupancy grid data: label as ????
