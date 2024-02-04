@@ -15,3 +15,6 @@ Next Steps:
 Goals: 
 - convert current "replication frame" to occupancy grid via aerial transform, search for zed2i guides
 - listen to ZED nodes + create lane_detection node with publishing
+
+Notes:
+- 0.05 x 0.05 m grid size for occupancy grid
