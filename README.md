@@ -21,3 +21,4 @@ Notes:
 - 0.05 x 0.05 m grid size for occupancy grid
 - add padding to include position of robot in numpy occupancy grid
 - header data of occupancy grid data: label as ????
+- converted image is 367 x 1279 pixels --> 10 x 14 pixels rep 1 0.05 x 0.05 m grid cell 
