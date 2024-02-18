@@ -1,0 +1,23 @@
+[0.329s] Invoking command in '/root/ros2_ws/src/drivable_area': PYTHONPATH=/root/ros2_ws/build/drivable_area/prefix_override:/root/ros2_ws/install/drivable_area/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/drivable_area build --build-base /root/ros2_ws/build/drivable_area/build install --record /root/ros2_ws/build/drivable_area/install.log --single-version-externally-managed
+[0.427s] running egg_info
+[0.427s] writing ../../build/drivable_area/drivable_area.egg-info/PKG-INFO
+[0.427s] writing dependency_links to ../../build/drivable_area/drivable_area.egg-info/dependency_links.txt
+[0.427s] writing entry points to ../../build/drivable_area/drivable_area.egg-info/entry_points.txt
+[0.427s] writing requirements to ../../build/drivable_area/drivable_area.egg-info/requires.txt
+[0.428s] writing top-level names to ../../build/drivable_area/drivable_area.egg-info/top_level.txt
+[0.428s] reading manifest file '../../build/drivable_area/drivable_area.egg-info/SOURCES.txt'
+[0.429s] writing manifest file '../../build/drivable_area/drivable_area.egg-info/SOURCES.txt'
+[0.429s] running build
+[0.429s] running build_py
+[0.429s] running install
+[0.430s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[0.430s]   warnings.warn(
+[0.430s] running install_lib
+[0.430s] running install_data
+[0.431s] running install_egg_info
+[0.431s] removing '/root/ros2_ws/install/drivable_area/lib/python3.10/site-packages/drivable_area-0.0.0-py3.10.egg-info' (and everything under it)
+[0.432s] Copying ../../build/drivable_area/drivable_area.egg-info to /root/ros2_ws/install/drivable_area/lib/python3.10/site-packages/drivable_area-0.0.0-py3.10.egg-info
+[0.432s] running install_scripts
+[0.442s] Installing drivable_area script to /root/ros2_ws/install/drivable_area/lib/drivable_area
+[0.443s] writing list of installed files to '/root/ros2_ws/build/drivable_area/install.log'
+[0.456s] Invoked command in '/root/ros2_ws/src/drivable_area' returned '0': PYTHONPATH=/root/ros2_ws/build/drivable_area/prefix_override:/root/ros2_ws/install/drivable_area/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/drivable_area build --build-base /root/ros2_ws/build/drivable_area/build install --record /root/ros2_ws/build/drivable_area/install.log --single-version-externally-managed
