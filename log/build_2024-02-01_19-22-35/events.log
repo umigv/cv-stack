@@ -1,0 +1,4 @@
+[0.000000] (-) TimerEvent: {}
+[0.000254] (-) JobUnselected: {'identifier': 'cv_node'}
+[0.000282] (-) JobUnselected: {'identifier': 'drivable_area'}
+[0.000442] (-) EventReactorShutdown: {}
