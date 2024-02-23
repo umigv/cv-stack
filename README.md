@@ -22,3 +22,4 @@ Notes:
 - 0.05 x 0.05 m grid size for occupancy grid
 - add padding to include position of robot in numpy occupancy grid
 - header data of occupancy grid data: label as ????
+- https://ros2-industrial-workshop.readthedocs.io/en/latest/_source/basics/ROS2-Simple-Publisher-Subscriber.html#build-and-run
