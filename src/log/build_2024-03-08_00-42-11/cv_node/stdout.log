@@ -1,0 +1,39 @@
+running egg_info
+creating ../build/cv_node/cv_node.egg-info
+writing ../build/cv_node/cv_node.egg-info/PKG-INFO
+writing dependency_links to ../build/cv_node/cv_node.egg-info/dependency_links.txt
+writing entry points to ../build/cv_node/cv_node.egg-info/entry_points.txt
+writing requirements to ../build/cv_node/cv_node.egg-info/requires.txt
+writing top-level names to ../build/cv_node/cv_node.egg-info/top_level.txt
+writing manifest file '../build/cv_node/cv_node.egg-info/SOURCES.txt'
+reading manifest file '../build/cv_node/cv_node.egg-info/SOURCES.txt'
+writing manifest file '../build/cv_node/cv_node.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/umarv/arvws/cv-nav-integration/src/build/cv_node/build
+creating /home/umarv/arvws/cv-nav-integration/src/build/cv_node/build/lib
+creating /home/umarv/arvws/cv-nav-integration/src/build/cv_node/build/lib/cv_node
+copying cv_node/__init__.py -> /home/umarv/arvws/cv-nav-integration/src/build/cv_node/build/lib/cv_node
+copying cv_node/subscriber_member_function.py -> /home/umarv/arvws/cv-nav-integration/src/build/cv_node/build/lib/cv_node
+copying cv_node/publisher_member_function.py -> /home/umarv/arvws/cv-nav-integration/src/build/cv_node/build/lib/cv_node
+running install
+running install_lib
+creating /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/python3.10/site-packages/cv_node
+copying /home/umarv/arvws/cv-nav-integration/src/build/cv_node/build/lib/cv_node/__init__.py -> /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/python3.10/site-packages/cv_node
+copying /home/umarv/arvws/cv-nav-integration/src/build/cv_node/build/lib/cv_node/subscriber_member_function.py -> /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/python3.10/site-packages/cv_node
+copying /home/umarv/arvws/cv-nav-integration/src/build/cv_node/build/lib/cv_node/publisher_member_function.py -> /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/python3.10/site-packages/cv_node
+byte-compiling /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/python3.10/site-packages/cv_node/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/python3.10/site-packages/cv_node/subscriber_member_function.py to subscriber_member_function.cpython-310.pyc
+byte-compiling /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/python3.10/site-packages/cv_node/publisher_member_function.py to publisher_member_function.cpython-310.pyc
+running install_data
+creating /home/umarv/arvws/cv-nav-integration/src/install/cv_node/share/ament_index
+creating /home/umarv/arvws/cv-nav-integration/src/install/cv_node/share/ament_index/resource_index
+creating /home/umarv/arvws/cv-nav-integration/src/install/cv_node/share/ament_index/resource_index/packages
+copying resource/cv_node -> /home/umarv/arvws/cv-nav-integration/src/install/cv_node/share/ament_index/resource_index/packages
+copying package.xml -> /home/umarv/arvws/cv-nav-integration/src/install/cv_node/share/cv_node
+running install_egg_info
+Copying ../build/cv_node/cv_node.egg-info to /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/python3.10/site-packages/cv_node-0.0.0-py3.10.egg-info
+running install_scripts
+Installing listener script to /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/cv_node
+Installing talker script to /home/umarv/arvws/cv-nav-integration/src/install/cv_node/lib/cv_node
+writing list of installed files to '/home/umarv/arvws/cv-nav-integration/src/build/cv_node/install.log'
