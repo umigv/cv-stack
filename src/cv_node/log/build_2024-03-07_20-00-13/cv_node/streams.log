@@ -1,0 +1,27 @@
+[0.270s] Invoking command in '/root/ros2_ws/src/cv_node': PYTHONPATH=/root/ros2_ws/src/cv_node/build/cv_node/prefix_override:/root/ros2_ws/src/cv_node/install/cv_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base build/cv_node build --build-base /root/ros2_ws/src/cv_node/build/cv_node/build install --record /root/ros2_ws/src/cv_node/build/cv_node/install.log --single-version-externally-managed
+[0.362s] running egg_info
+[0.362s] writing build/cv_node/cv_node.egg-info/PKG-INFO
+[0.363s] writing dependency_links to build/cv_node/cv_node.egg-info/dependency_links.txt
+[0.363s] writing entry points to build/cv_node/cv_node.egg-info/entry_points.txt
+[0.363s] writing requirements to build/cv_node/cv_node.egg-info/requires.txt
+[0.363s] writing top-level names to build/cv_node/cv_node.egg-info/top_level.txt
+[0.364s] reading manifest file 'build/cv_node/cv_node.egg-info/SOURCES.txt'
+[0.364s] writing manifest file 'build/cv_node/cv_node.egg-info/SOURCES.txt'
+[0.364s] running build
+[0.365s] running build_py
+[0.365s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[0.365s]   warnings.warn(
+[0.365s] copying cv_node/publisher_member_function.py -> /root/ros2_ws/src/cv_node/build/cv_node/build/lib/cv_node
+[0.365s] running install
+[0.365s] running install_lib
+[0.365s] copying /root/ros2_ws/src/cv_node/build/cv_node/build/lib/cv_node/publisher_member_function.py -> /root/ros2_ws/src/cv_node/install/cv_node/lib/python3.10/site-packages/cv_node
+[0.365s] byte-compiling /root/ros2_ws/src/cv_node/install/cv_node/lib/python3.10/site-packages/cv_node/publisher_member_function.py to publisher_member_function.cpython-310.pyc
+[0.366s] running install_data
+[0.366s] running install_egg_info
+[0.367s] removing '/root/ros2_ws/src/cv_node/install/cv_node/lib/python3.10/site-packages/cv_node-0.0.0-py3.10.egg-info' (and everything under it)
+[0.367s] Copying build/cv_node/cv_node.egg-info to /root/ros2_ws/src/cv_node/install/cv_node/lib/python3.10/site-packages/cv_node-0.0.0-py3.10.egg-info
+[0.368s] running install_scripts
+[0.377s] Installing listener script to /root/ros2_ws/src/cv_node/install/cv_node/lib/cv_node
+[0.377s] Installing talker script to /root/ros2_ws/src/cv_node/install/cv_node/lib/cv_node
+[0.377s] writing list of installed files to '/root/ros2_ws/src/cv_node/build/cv_node/install.log'
+[0.390s] Invoked command in '/root/ros2_ws/src/cv_node' returned '0': PYTHONPATH=/root/ros2_ws/src/cv_node/build/cv_node/prefix_override:/root/ros2_ws/src/cv_node/install/cv_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base build/cv_node build --build-base /root/ros2_ws/src/cv_node/build/cv_node/build install --record /root/ros2_ws/src/cv_node/build/cv_node/install.log --single-version-externally-managed
