@@ -1,0 +1,61 @@
+[0.000000] (-) TimerEvent: {}
+[0.003035] (cv_node) JobQueued: {'identifier': 'cv_node', 'dependencies': OrderedDict()}
+[0.006000] (cv_node) JobStarted: {'identifier': 'cv_node'}
+[0.100428] (-) TimerEvent: {}
+[0.203435] (-) TimerEvent: {}
+[0.304467] (-) TimerEvent: {}
+[0.405449] (-) TimerEvent: {}
+[0.510107] (-) TimerEvent: {}
+[0.612482] (-) TimerEvent: {}
+[0.718584] (-) TimerEvent: {}
+[0.822449] (-) TimerEvent: {}
+[0.923460] (-) TimerEvent: {}
+[1.019685] (cv_node) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/cv_node', 'build', '--build-base', '/home/umarv/arvws/cv-nav-integration/build/cv_node/build', 'install', '--record', '/home/umarv/arvws/cv-nav-integration/build/cv_node/install.log', '--single-version-externally-managed'], 'cwd': '/home/umarv/arvws/cv-nav-integration/src/cv_node', 'env': {'HOSTNAME': 'umarv-ros2', 'GIT_ASKPASS': '/home/umarv/.vscode-server/bin/903b1e9d8990623e3d7da1df3d33db3e42d80eda/extensions/git/dist/askpass.sh', 'LD_LIBRARY_PATH': '/usr/lib/wsl/lib', 'BROWSER': '/home/umarv/.vscode-server/bin/903b1e9d8990623e3d7da1df3d33db3e42d80eda/bin/helpers/browser.sh', 'HOME': '/home/umarv', 'OLDPWD': '/home/umarv/arvws/cv-nav-integration/src', 'TERM_PROGRAM_VERSION': '1.86.2', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-3a371af0-1035-46b1-87eb-05d5926f6722.sock', 'VSCODE_GIT_ASKPASS_MAIN': '/home/umarv/.vscode-server/bin/903b1e9d8990623e3d7da1df3d33db3e42d80eda/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/home/umarv/.vscode-server/bin/903b1e9d8990623e3d7da1df3d33db3e42d80eda/node', 'REMOTE_CONTAINERS': 'true', 'COLORTERM': 'truecolor', 'ROS_DISTRO': 'humble', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-36d4bfa5-8ddb-4aa3-a2d8-f0c2e14c0fd3.sock', 'TERM': 'xterm-256color', 'UV_USE_IO_URING': '0', 'PATH': '/home/umarv/.vscode-server/bin/903b1e9d8990623e3d7da1df3d33db3e42d80eda/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'DISPLAY': '10.0.0.161:0', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/vscode-ssh-auth-36d4bfa5-8ddb-4aa3-a2d8-f0c2e14c0fd3.sock","/tmp/.X11-unix/X0"]', 'LANG': 'C.UTF-8', 'LIBVA_DRIVER_NAME': 'd3d12', 'TERM_PROGRAM': 'vscode', 'VSCODE_GIT_IPC_HANDLE': '/tmp/vscode-git-70a5ac1d3c.sock', 'SSH_AUTH_SOCK': '/tmp/vscode-ssh-auth-36d4bfa5-8ddb-4aa3-a2d8-f0c2e14c0fd3.sock', 'REMOTE_CONTAINERS_DISPLAY_SOCK': '/tmp/.X11-unix/X0', 'SHELL': '/bin/sh', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'LC_ALL': 'C.UTF-8', 'PWD': '/home/umarv/arvws/cv-nav-integration/build/cv_node', 'COLCON': '1', 'PYTHONPATH': '/home/umarv/arvws/cv-nav-integration/build/cv_node/prefix_override:/home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages:'}, 'shell': False}
+[1.024456] (-) TimerEvent: {}
+[1.125476] (-) TimerEvent: {}
+[1.226487] (-) TimerEvent: {}
+[1.274441] (cv_node) StdoutLine: {'line': b'running egg_info\n'}
+[1.274752] (cv_node) StdoutLine: {'line': b'creating ../../build/cv_node/cv_node.egg-info\n'}
+[1.274804] (cv_node) StdoutLine: {'line': b'writing ../../build/cv_node/cv_node.egg-info/PKG-INFO\n'}
+[1.274844] (cv_node) StdoutLine: {'line': b'writing dependency_links to ../../build/cv_node/cv_node.egg-info/dependency_links.txt\n'}
+[1.274884] (cv_node) StdoutLine: {'line': b'writing entry points to ../../build/cv_node/cv_node.egg-info/entry_points.txt\n'}
+[1.274921] (cv_node) StdoutLine: {'line': b'writing requirements to ../../build/cv_node/cv_node.egg-info/requires.txt\n'}
+[1.274957] (cv_node) StdoutLine: {'line': b'writing top-level names to ../../build/cv_node/cv_node.egg-info/top_level.txt\n'}
+[1.274992] (cv_node) StdoutLine: {'line': b"writing manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'\n"}
+[1.275026] (cv_node) StdoutLine: {'line': b"reading manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'\n"}
+[1.277642] (cv_node) StdoutLine: {'line': b"writing manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'\n"}
+[1.278566] (cv_node) StdoutLine: {'line': b'running build\n'}
+[1.278661] (cv_node) StdoutLine: {'line': b'running build_py\n'}
+[1.279397] (cv_node) StdoutLine: {'line': b'creating /home/umarv/arvws/cv-nav-integration/build/cv_node/build\n'}
+[1.279667] (cv_node) StdoutLine: {'line': b'creating /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib\n'}
+[1.279804] (cv_node) StdoutLine: {'line': b'creating /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node\n'}
+[1.279951] (cv_node) StdoutLine: {'line': b'copying cv_node/__init__.py -> /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node\n'}
+[1.280252] (cv_node) StdoutLine: {'line': b'copying cv_node/subscriber_member_function.py -> /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node\n'}
+[1.280942] (cv_node) StdoutLine: {'line': b'copying cv_node/publisher_member_function.py -> /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node\n'}
+[1.282396] (cv_node) StdoutLine: {'line': b'running install\n'}
+[1.282490] (cv_node) StdoutLine: {'line': b'running install_lib\n'}
+[1.282574] (cv_node) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.\n'}
+[1.282645] (cv_node) StderrLine: {'line': b'  warnings.warn(\n'}
+[1.286398] (cv_node) StdoutLine: {'line': b'creating /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node\n'}
+[1.286483] (cv_node) StdoutLine: {'line': b'copying /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node/__init__.py -> /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node\n'}
+[1.286526] (cv_node) StdoutLine: {'line': b'copying /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node/subscriber_member_function.py -> /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node\n'}
+[1.286573] (cv_node) StdoutLine: {'line': b'copying /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node/publisher_member_function.py -> /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node\n'}
+[1.286613] (cv_node) StdoutLine: {'line': b'byte-compiling /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/__init__.py to __init__.cpython-310.pyc\n'}
+[1.286654] (cv_node) StdoutLine: {'line': b'byte-compiling /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/subscriber_member_function.py to subscriber_member_function.cpython-310.pyc\n'}
+[1.286878] (cv_node) StdoutLine: {'line': b'byte-compiling /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/publisher_member_function.py to publisher_member_function.cpython-310.pyc\n'}
+[1.287975] (cv_node) StdoutLine: {'line': b'running install_data\n'}
+[1.288332] (cv_node) StdoutLine: {'line': b'creating /home/umarv/arvws/cv-nav-integration/install/cv_node/share/ament_index\n'}
+[1.288477] (cv_node) StdoutLine: {'line': b'creating /home/umarv/arvws/cv-nav-integration/install/cv_node/share/ament_index/resource_index\n'}
+[1.288577] (cv_node) StdoutLine: {'line': b'creating /home/umarv/arvws/cv-nav-integration/install/cv_node/share/ament_index/resource_index/packages\n'}
+[1.290404] (cv_node) StdoutLine: {'line': b'copying resource/cv_node -> /home/umarv/arvws/cv-nav-integration/install/cv_node/share/ament_index/resource_index/packages\n'}
+[1.290467] (cv_node) StdoutLine: {'line': b'copying package.xml -> /home/umarv/arvws/cv-nav-integration/install/cv_node/share/cv_node\n'}
+[1.290508] (cv_node) StdoutLine: {'line': b'running install_egg_info\n'}
+[1.290544] (cv_node) StdoutLine: {'line': b'Copying ../../build/cv_node/cv_node.egg-info to /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node-0.0.0-py3.10.egg-info\n'}
+[1.290954] (cv_node) StdoutLine: {'line': b'running install_scripts\n'}
+[1.313651] (cv_node) StdoutLine: {'line': b'Installing listener script to /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/cv_node\n'}
+[1.314395] (cv_node) StdoutLine: {'line': b'Installing talker script to /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/cv_node\n'}
+[1.314712] (cv_node) StdoutLine: {'line': b"writing list of installed files to '/home/umarv/arvws/cv-nav-integration/build/cv_node/install.log'\n"}
+[1.327401] (-) TimerEvent: {}
+[1.330655] (cv_node) CommandEnded: {'returncode': 0}
+[1.354571] (cv_node) JobEnded: {'identifier': 'cv_node', 'rc': 0}
+[1.355580] (-) EventReactorShutdown: {}

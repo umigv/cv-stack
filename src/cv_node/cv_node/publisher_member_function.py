@@ -15,9 +15,10 @@
 
 # Import necessary modules
 import rclpy
+import numpy as np
 from nav_msgs.msg import OccupancyGrid
 from rclpy.node import Node
-import numpy as np
+
 
 # Define a class MinimalPublisher that inherits from Node
 class MinimalPublisher(Node):
@@ -43,15 +44,20 @@ class MinimalPublisher(Node):
         # This method is to return a new occupancy grid
         # This is a placeholder implementation, actual will be added later
         # Create a dummy 2D numpy array of type np.int8
-        arr = np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]], dtype=np.int8)
+        arr = np.array([[0, 0,  0, 0, 1]], dtype=np.int8)
 
                 # Convert the numpy array to an occupancy grid
-        grid = numpy_to_occupancy_grid(arr)
+        #grid = numpy_to_occupancy_grid(arr)
+        grid = OccupancyGrid()
+        grid.data = arr
+        
+        
         return grid
 
 # This function converts a numpy array to an occupancy grid
-def numpy_to_occupancy_grid(arr= np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]], dtype=np.int8), info=None):
+def numpy_to_occupancy_grid(arr= np.array([[0, 0], [0,1], [0, 1]], dtype=np.int8), info=None):
     # Check if the array is 2D and of type int8
+    
     if not len(arr.shape) == 2:
         raise TypeError('Array must be 2D')
     if not arr.dtype == np.int8:
@@ -64,7 +70,7 @@ def numpy_to_occupancy_grid(arr= np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]], dty
         arr = arr.data
 
     # Set the data and info of the grid
-    grid.data = list(arr.ravel())
+    grid.data = arr
     grid.info = info or MapMetaData()
     grid.info.height = arr.shape[0]
     grid.info.width = arr.shape[1]
