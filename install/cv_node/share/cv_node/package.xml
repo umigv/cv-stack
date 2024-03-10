@@ -4,11 +4,15 @@
   <name>cv_node</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
+  <maintainer email="sharmakr@umich.edu">root</maintainer>
+  <maintainer email="dnimmala@umich.edu">root</maintainer>
+
   <maintainer email="kanishkkandoi52@gmail.com">root</maintainer>
+
   <license>TODO: License declaration</license>
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
-
+  <exec_depend>python3-numpy</exec_depend>
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>

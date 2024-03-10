@@ -1,3 +1,0 @@
-[console_scripts]
-drivable_area = drivable_area.drivable_area:main
-

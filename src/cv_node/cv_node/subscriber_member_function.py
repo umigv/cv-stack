@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-
+import numpy as np
 from nav_msgs.msg import OccupancyGrid
 import numpy as np
 

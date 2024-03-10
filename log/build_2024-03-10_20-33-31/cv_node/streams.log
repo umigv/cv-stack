@@ -1,0 +1,25 @@
+[0.977s] Invoking command in '/home/umarv/arvws/cv-nav-integration/src/cv_node': PYTHONPATH=/home/umarv/arvws/cv-nav-integration/build/cv_node/prefix_override:/home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/cv_node build --build-base /home/umarv/arvws/cv-nav-integration/build/cv_node/build install --record /home/umarv/arvws/cv-nav-integration/build/cv_node/install.log --single-version-externally-managed
+[1.383s] running egg_info
+[1.383s] writing ../../build/cv_node/cv_node.egg-info/PKG-INFO
+[1.383s] writing dependency_links to ../../build/cv_node/cv_node.egg-info/dependency_links.txt
+[1.383s] writing entry points to ../../build/cv_node/cv_node.egg-info/entry_points.txt
+[1.383s] writing requirements to ../../build/cv_node/cv_node.egg-info/requires.txt
+[1.384s] writing top-level names to ../../build/cv_node/cv_node.egg-info/top_level.txt
+[1.385s] reading manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'
+[1.385s] writing manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'
+[1.385s] running build
+[1.386s] running build_py
+[1.386s] copying cv_node/publisher_member_function.py -> /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node
+[1.386s] running install
+[1.386s] running install_lib
+[1.387s] copying /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node/publisher_member_function.py -> /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node
+[1.387s] byte-compiling /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/publisher_member_function.py to publisher_member_function.cpython-310.pyc
+[1.391s] running install_data
+[1.392s] running install_egg_info
+[1.393s] removing '/home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node-0.0.0-py3.10.egg-info' (and everything under it)
+[1.394s] Copying ../../build/cv_node/cv_node.egg-info to /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node-0.0.0-py3.10.egg-info
+[1.395s] running install_scripts
+[1.418s] Installing listener script to /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/cv_node
+[1.418s] Installing talker script to /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/cv_node
+[1.418s] writing list of installed files to '/home/umarv/arvws/cv-nav-integration/build/cv_node/install.log'
+[1.437s] Invoked command in '/home/umarv/arvws/cv-nav-integration/src/cv_node' returned '0': PYTHONPATH=/home/umarv/arvws/cv-nav-integration/build/cv_node/prefix_override:/home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/cv_node build --build-base /home/umarv/arvws/cv-nav-integration/build/cv_node/build install --record /home/umarv/arvws/cv-nav-integration/build/cv_node/install.log --single-version-externally-managed

@@ -1,0 +1,43 @@
+[1.014s] Invoking command in '/home/umarv/arvws/cv-nav-integration/src/cv_node': PYTHONPATH=/home/umarv/arvws/cv-nav-integration/build/cv_node/prefix_override:/home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/cv_node build --build-base /home/umarv/arvws/cv-nav-integration/build/cv_node/build install --record /home/umarv/arvws/cv-nav-integration/build/cv_node/install.log --single-version-externally-managed
+[1.269s] running egg_info
+[1.269s] creating ../../build/cv_node/cv_node.egg-info
+[1.269s] writing ../../build/cv_node/cv_node.egg-info/PKG-INFO
+[1.269s] writing dependency_links to ../../build/cv_node/cv_node.egg-info/dependency_links.txt
+[1.269s] writing entry points to ../../build/cv_node/cv_node.egg-info/entry_points.txt
+[1.269s] writing requirements to ../../build/cv_node/cv_node.egg-info/requires.txt
+[1.269s] writing top-level names to ../../build/cv_node/cv_node.egg-info/top_level.txt
+[1.269s] writing manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'
+[1.269s] reading manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'
+[1.272s] writing manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'
+[1.273s] running build
+[1.273s] running build_py
+[1.273s] creating /home/umarv/arvws/cv-nav-integration/build/cv_node/build
+[1.274s] creating /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib
+[1.274s] creating /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node
+[1.274s] copying cv_node/__init__.py -> /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node
+[1.274s] copying cv_node/subscriber_member_function.py -> /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node
+[1.275s] copying cv_node/publisher_member_function.py -> /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node
+[1.276s] running install
+[1.276s] running install_lib
+[1.277s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[1.277s]   warnings.warn(
+[1.280s] creating /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node
+[1.280s] copying /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node/__init__.py -> /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node
+[1.281s] copying /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node/subscriber_member_function.py -> /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node
+[1.281s] copying /home/umarv/arvws/cv-nav-integration/build/cv_node/build/lib/cv_node/publisher_member_function.py -> /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node
+[1.281s] byte-compiling /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/__init__.py to __init__.cpython-310.pyc
+[1.281s] byte-compiling /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/subscriber_member_function.py to subscriber_member_function.cpython-310.pyc
+[1.281s] byte-compiling /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/publisher_member_function.py to publisher_member_function.cpython-310.pyc
+[1.282s] running install_data
+[1.282s] creating /home/umarv/arvws/cv-nav-integration/install/cv_node/share/ament_index
+[1.282s] creating /home/umarv/arvws/cv-nav-integration/install/cv_node/share/ament_index/resource_index
+[1.283s] creating /home/umarv/arvws/cv-nav-integration/install/cv_node/share/ament_index/resource_index/packages
+[1.284s] copying resource/cv_node -> /home/umarv/arvws/cv-nav-integration/install/cv_node/share/ament_index/resource_index/packages
+[1.284s] copying package.xml -> /home/umarv/arvws/cv-nav-integration/install/cv_node/share/cv_node
+[1.285s] running install_egg_info
+[1.285s] Copying ../../build/cv_node/cv_node.egg-info to /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node-0.0.0-py3.10.egg-info
+[1.285s] running install_scripts
+[1.308s] Installing listener script to /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/cv_node
+[1.308s] Installing talker script to /home/umarv/arvws/cv-nav-integration/install/cv_node/lib/cv_node
+[1.309s] writing list of installed files to '/home/umarv/arvws/cv-nav-integration/build/cv_node/install.log'
+[1.325s] Invoked command in '/home/umarv/arvws/cv-nav-integration/src/cv_node' returned '0': PYTHONPATH=/home/umarv/arvws/cv-nav-integration/build/cv_node/prefix_override:/home/umarv/arvws/cv-nav-integration/install/cv_node/lib/python3.10/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/cv_node build --build-base /home/umarv/arvws/cv-nav-integration/build/cv_node/build install --record /home/umarv/arvws/cv-nav-integration/build/cv_node/install.log --single-version-externally-managed
