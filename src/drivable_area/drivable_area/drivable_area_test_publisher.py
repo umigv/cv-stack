@@ -25,8 +25,8 @@ class MinimalPublisher(Node):
         
         self.bridge = CvBridge()
         # Create a publisher that publishes OccupancyGrid messages on the 'topic' topic
-        self.publisher_ = self.create_publisher(Image, 'url', 10)
-        # Create a timer that calls the timer_callback method every 0.5 seconds
+        self.publisher_ = self.create_publisher(Image, 'zed_image', 10)
+        # made the timer period the same as the FPS
         timer_period = 1 / fps  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
 

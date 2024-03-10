@@ -1,3 +1,5 @@
+# THIS WILL SUBSCRIBE TO ZED CAMERA AND PRODUCE AN OCCUPANCY GRID
+
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
@@ -9,33 +11,31 @@ from ultralytics import YOLO
 from nav_msgs.msg import OccupancyGrid, MapMetaData
 from array import array as Array
 
-# model = YOLO('./utils/nov13.pt')
 model = YOLO('src/drivable_area/drivable_area/utils/nov13.pt')
-
-# fps = 2
-# width = 
-# height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-# fourcc = cv2.VideoWriter_fourcc(*'XVID')
-# out = cv2.VideoWriter('output_video.avi', fourcc, fps, (width, height), isColor=True)
-# out2 = cv2.VideoWriter('occupancy_grid.avi', fourcc, fps, (width, height), isColor=True)
-
 
 class DrivableArea(Node):
 
     def __init__(self):
         super().__init__('drivable_area')
+        
+        # the topic 'url' should be changed to a more specific topic name
         self.subscription = self.create_subscription(
             Image,
-            'url',
+            'zed_image',
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
         self.bridge = CvBridge()
 
+
+    # TODO: translate the occupancy grid into birds eye view
+    # TODO: publish the occupancy grid for nav team
     def listener_callback(self, msg):
+        
+        #converts Image message to cv2 type
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
+        # runs YOLO predictions on the cv2 image
         results = model.predict(frame)
         masks = results[0].masks.xy
         print(masks)
