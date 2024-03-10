@@ -80,4 +80,14 @@ def perspective(image, src_quad, dst_quad, cp):
     cp.matrix = matrix1
     cp.maxWidth = int(maxWidth1)
     cp.maxHeight = int(maxHeight1)
-    return cv2.warpPerspective(image, matrix1, (cp.maxWidth, cp.maxHeight))
+
+    warped = cv2.warpPerspective(image, matrix1, (cp.maxWidth, cp.maxHeight))
+
+    mask = np.full((cp.maxHeight, cp.maxWidth), -1, dtype=np.float32)
+
+    trapezoid = np.array([bottomLeft, bottomRight, topRight, topLeft], dtype = 'int32')
+    cv2.fillConvexPoly(mask, trapezoid, 0)
+
+    warped += mask
+
+    return warped

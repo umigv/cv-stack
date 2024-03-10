@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 
 from nav_msgs.msg import OccupancyGrid
-
+import numpy as np
 
 class MinimalSubscriber(Node):
 

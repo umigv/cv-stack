@@ -17,6 +17,7 @@
 import rclpy
 from nav_msgs.msg import OccupancyGrid
 from rclpy.node import Node
+import numpy as np
 
 # Define a class MinimalPublisher that inherits from Node
 class MinimalPublisher(Node):
@@ -63,7 +64,7 @@ def numpy_to_occupancy_grid(arr= np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]], dty
         arr = arr.data
 
     # Set the data and info of the grid
-    grid.data = Array('b', arr.ravel().astype(np.int8))
+    grid.data = list(arr.ravel())
     grid.info = info or MapMetaData()
     grid.info.height = arr.shape[0]
     grid.info.width = arr.shape[1]
