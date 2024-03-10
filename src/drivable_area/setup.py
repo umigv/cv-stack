@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'drivable_area = drivable_area.drivable_area:main'
+            'drivable_area = drivable_area.drivable_area:main',
+            'drivable_area_test_publisher = drivable_area.drivable_area_test_publisher:main'
         ],
     },
 )

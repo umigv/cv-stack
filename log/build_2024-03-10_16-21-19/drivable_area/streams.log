@@ -1,0 +1,26 @@
+[0.547s] Invoking command in '/home/jmcfee/arv/cv-nav-integration/src/drivable_area': PYTHONPATH=/home/jmcfee/arv/cv-nav-integration/build/drivable_area/prefix_override:/home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages:${PYTHONPATH} WSLENV=ELECTRON_RUN_AS_NODE/w: /usr/bin/python3 setup.py egg_info --egg-base ../../build/drivable_area build --build-base /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build install --record /home/jmcfee/arv/cv-nav-integration/build/drivable_area/install.log --single-version-externally-managed
+[0.706s] running egg_info
+[0.707s] writing ../../build/drivable_area/drivable_area.egg-info/PKG-INFO
+[0.708s] writing dependency_links to ../../build/drivable_area/drivable_area.egg-info/dependency_links.txt
+[0.708s] writing entry points to ../../build/drivable_area/drivable_area.egg-info/entry_points.txt
+[0.708s] writing requirements to ../../build/drivable_area/drivable_area.egg-info/requires.txt
+[0.708s] writing top-level names to ../../build/drivable_area/drivable_area.egg-info/top_level.txt
+[0.710s] reading manifest file '../../build/drivable_area/drivable_area.egg-info/SOURCES.txt'
+[0.711s] writing manifest file '../../build/drivable_area/drivable_area.egg-info/SOURCES.txt'
+[0.712s] running build
+[0.712s] running build_py
+[0.712s] copying drivable_area/drivable_area_test_publisher.py -> /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build/lib/drivable_area
+[0.713s] running install
+[0.713s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[0.713s]   warnings.warn(
+[0.713s] running install_lib
+[0.714s] copying /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build/lib/drivable_area/drivable_area_test_publisher.py -> /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area
+[0.715s] byte-compiling /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area/drivable_area_test_publisher.py to drivable_area_test_publisher.cpython-310.pyc
+[0.716s] running install_data
+[0.717s] running install_egg_info
+[0.719s] removing '/home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area-0.0.0-py3.10.egg-info' (and everything under it)
+[0.719s] Copying ../../build/drivable_area/drivable_area.egg-info to /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area-0.0.0-py3.10.egg-info
+[0.720s] running install_scripts
+[0.737s] Installing drivable_area = drivable_area.drivable_area:maindrivable_area_test_publisher script to /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/drivable_area
+[0.738s] writing list of installed files to '/home/jmcfee/arv/cv-nav-integration/build/drivable_area/install.log'
+[0.755s] Invoked command in '/home/jmcfee/arv/cv-nav-integration/src/drivable_area' returned '0': PYTHONPATH=/home/jmcfee/arv/cv-nav-integration/build/drivable_area/prefix_override:/home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages:${PYTHONPATH} WSLENV=ELECTRON_RUN_AS_NODE/w: /usr/bin/python3 setup.py egg_info --egg-base ../../build/drivable_area build --build-base /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build install --record /home/jmcfee/arv/cv-nav-integration/build/drivable_area/install.log --single-version-externally-managed
