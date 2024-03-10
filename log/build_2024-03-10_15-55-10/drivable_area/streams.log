@@ -1,0 +1,31 @@
+[1.191s] Invoking command in '/home/jmcfee/arv/cv-nav-integration/src/drivable_area': PYTHONPATH=/home/jmcfee/arv/cv-nav-integration/build/drivable_area/prefix_override:/home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages:${PYTHONPATH} WSLENV=ELECTRON_RUN_AS_NODE/w: /usr/bin/python3 setup.py egg_info --egg-base ../../build/drivable_area build --build-base /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build install --record /home/jmcfee/arv/cv-nav-integration/build/drivable_area/install.log --single-version-externally-managed
+[1.453s] running egg_info
+[1.454s] writing ../../build/drivable_area/drivable_area.egg-info/PKG-INFO
+[1.454s] writing dependency_links to ../../build/drivable_area/drivable_area.egg-info/dependency_links.txt
+[1.454s] writing entry points to ../../build/drivable_area/drivable_area.egg-info/entry_points.txt
+[1.455s] writing requirements to ../../build/drivable_area/drivable_area.egg-info/requires.txt
+[1.455s] writing top-level names to ../../build/drivable_area/drivable_area.egg-info/top_level.txt
+[1.457s] reading manifest file '../../build/drivable_area/drivable_area.egg-info/SOURCES.txt'
+[1.458s] writing manifest file '../../build/drivable_area/drivable_area.egg-info/SOURCES.txt'
+[1.458s] running build
+[1.458s] running build_py
+[1.459s] copying drivable_area/bev.py -> /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build/lib/drivable_area
+[1.459s] copying drivable_area/drivable_area.py -> /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build/lib/drivable_area
+[1.459s] running install
+[1.460s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[1.460s]   warnings.warn(
+[1.460s] running install_lib
+[1.461s] copying /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build/lib/drivable_area/bev.py -> /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area
+[1.462s] copying /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build/lib/drivable_area/drivable_area.py -> /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area
+[1.462s] byte-compiling /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area/bev.py to bev.cpython-310.pyc
+[1.463s] byte-compiling /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area/drivable_area.py to drivable_area.cpython-310.pyc
+[1.464s] running install_data
+[1.465s] copying resource/drivable_area -> /home/jmcfee/arv/cv-nav-integration/install/drivable_area/share/ament_index/resource_index/packages
+[1.465s] copying package.xml -> /home/jmcfee/arv/cv-nav-integration/install/drivable_area/share/drivable_area
+[1.465s] running install_egg_info
+[1.468s] removing '/home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area-0.0.0-py3.10.egg-info' (and everything under it)
+[1.469s] Copying ../../build/drivable_area/drivable_area.egg-info to /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area-0.0.0-py3.10.egg-info
+[1.470s] running install_scripts
+[1.489s] Installing drivable_area script to /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/drivable_area
+[1.490s] writing list of installed files to '/home/jmcfee/arv/cv-nav-integration/build/drivable_area/install.log'
+[1.517s] Invoked command in '/home/jmcfee/arv/cv-nav-integration/src/drivable_area' returned '0': PYTHONPATH=/home/jmcfee/arv/cv-nav-integration/build/drivable_area/prefix_override:/home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages:${PYTHONPATH} WSLENV=ELECTRON_RUN_AS_NODE/w: /usr/bin/python3 setup.py egg_info --egg-base ../../build/drivable_area build --build-base /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build install --record /home/jmcfee/arv/cv-nav-integration/build/drivable_area/install.log --single-version-externally-managed

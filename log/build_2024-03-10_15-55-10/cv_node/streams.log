@@ -1,0 +1,38 @@
+[1.288s] Invoking command in '/home/jmcfee/arv/cv-nav-integration/src/cv_node': PYTHONPATH=/home/jmcfee/arv/cv-nav-integration/build/cv_node/prefix_override:/home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages:${PYTHONPATH} WSLENV=ELECTRON_RUN_AS_NODE/w: /usr/bin/python3 setup.py egg_info --egg-base ../../build/cv_node build --build-base /home/jmcfee/arv/cv-nav-integration/build/cv_node/build install --record /home/jmcfee/arv/cv-nav-integration/build/cv_node/install.log --single-version-externally-managed
+[1.583s] running egg_info
+[1.583s] creating ../../build/cv_node/cv_node.egg-info
+[1.583s] writing ../../build/cv_node/cv_node.egg-info/PKG-INFO
+[1.584s] writing dependency_links to ../../build/cv_node/cv_node.egg-info/dependency_links.txt
+[1.584s] writing entry points to ../../build/cv_node/cv_node.egg-info/entry_points.txt
+[1.584s] writing requirements to ../../build/cv_node/cv_node.egg-info/requires.txt
+[1.584s] writing top-level names to ../../build/cv_node/cv_node.egg-info/top_level.txt
+[1.584s] writing manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'
+[1.586s] reading manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'
+[1.587s] writing manifest file '../../build/cv_node/cv_node.egg-info/SOURCES.txt'
+[1.587s] running build
+[1.588s] running build_py
+[1.588s] creating /home/jmcfee/arv/cv-nav-integration/build/cv_node/build
+[1.588s] creating /home/jmcfee/arv/cv-nav-integration/build/cv_node/build/lib
+[1.589s] creating /home/jmcfee/arv/cv-nav-integration/build/cv_node/build/lib/cv_node
+[1.589s] copying cv_node/publisher_member_function.py -> /home/jmcfee/arv/cv-nav-integration/build/cv_node/build/lib/cv_node
+[1.589s] copying cv_node/subscriber_member_function.py -> /home/jmcfee/arv/cv-nav-integration/build/cv_node/build/lib/cv_node
+[1.589s] copying cv_node/__init__.py -> /home/jmcfee/arv/cv-nav-integration/build/cv_node/build/lib/cv_node
+[1.589s] running install
+[1.590s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[1.590s]   warnings.warn(
+[1.590s] running install_lib
+[1.591s] creating /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node
+[1.592s] copying /home/jmcfee/arv/cv-nav-integration/build/cv_node/build/lib/cv_node/publisher_member_function.py -> /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node
+[1.592s] copying /home/jmcfee/arv/cv-nav-integration/build/cv_node/build/lib/cv_node/subscriber_member_function.py -> /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node
+[1.592s] copying /home/jmcfee/arv/cv-nav-integration/build/cv_node/build/lib/cv_node/__init__.py -> /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node
+[1.592s] byte-compiling /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/publisher_member_function.py to publisher_member_function.cpython-310.pyc
+[1.593s] byte-compiling /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/subscriber_member_function.py to subscriber_member_function.cpython-310.pyc
+[1.594s] byte-compiling /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node/__init__.py to __init__.cpython-310.pyc
+[1.594s] running install_data
+[1.594s] running install_egg_info
+[1.597s] Copying ../../build/cv_node/cv_node.egg-info to /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages/cv_node-0.0.0-py3.10.egg-info
+[1.598s] running install_scripts
+[1.624s] Installing listener script to /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/cv_node
+[1.624s] Installing talker script to /home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/cv_node
+[1.624s] writing list of installed files to '/home/jmcfee/arv/cv-nav-integration/build/cv_node/install.log'
+[1.696s] Invoked command in '/home/jmcfee/arv/cv-nav-integration/src/cv_node' returned '0': PYTHONPATH=/home/jmcfee/arv/cv-nav-integration/build/cv_node/prefix_override:/home/jmcfee/arv/cv-nav-integration/install/cv_node/lib/python3.10/site-packages:${PYTHONPATH} WSLENV=ELECTRON_RUN_AS_NODE/w: /usr/bin/python3 setup.py egg_info --egg-base ../../build/cv_node build --build-base /home/jmcfee/arv/cv-nav-integration/build/cv_node/build install --record /home/jmcfee/arv/cv-nav-integration/build/cv_node/install.log --single-version-externally-managed

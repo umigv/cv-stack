@@ -1,0 +1,23 @@
+running egg_info
+writing ../../build/drivable_area/drivable_area.egg-info/PKG-INFO
+writing dependency_links to ../../build/drivable_area/drivable_area.egg-info/dependency_links.txt
+writing entry points to ../../build/drivable_area/drivable_area.egg-info/entry_points.txt
+writing requirements to ../../build/drivable_area/drivable_area.egg-info/requires.txt
+writing top-level names to ../../build/drivable_area/drivable_area.egg-info/top_level.txt
+reading manifest file '../../build/drivable_area/drivable_area.egg-info/SOURCES.txt'
+writing manifest file '../../build/drivable_area/drivable_area.egg-info/SOURCES.txt'
+running build
+running build_py
+copying drivable_area/drivable_area.py -> /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build/lib/drivable_area
+running install
+running install_lib
+copying /home/jmcfee/arv/cv-nav-integration/build/drivable_area/build/lib/drivable_area/drivable_area.py -> /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area
+byte-compiling /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area/drivable_area.py to drivable_area.cpython-310.pyc
+running install_data
+copying package.xml -> /home/jmcfee/arv/cv-nav-integration/install/drivable_area/share/drivable_area
+running install_egg_info
+removing '/home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/drivable_area/drivable_area.egg-info to /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/python3.10/site-packages/drivable_area-0.0.0-py3.10.egg-info
+running install_scripts
+Installing drivable_area script to /home/jmcfee/arv/cv-nav-integration/install/drivable_area/lib/drivable_area
+writing list of installed files to '/home/jmcfee/arv/cv-nav-integration/build/drivable_area/install.log'
