@@ -104,22 +104,22 @@ def main(args=None):
     node.destroy_node()
     rclpy.shutdown()
 
-# def numpy_to_occupancy_grid(arr, info=None, x=80,y=77):
-#     if not len(arr.shape) == 2:
-#         raise TypeError('Array must be 2D')
-#     if not arr.dtype == np.int8:
-#         raise TypeError('Array must be of int8s')
+def numpy_to_occupancy_grid(arr, info=None, x=80,y=77):
+    if not len(arr.shape) == 2:
+        raise TypeError('Array must be 2D')
+    if not arr.dtype == np.int8:
+        raise TypeError('Array must be of int8s')
 
-#     grid = OccupancyGrid()
-#     if isinstance(arr, np.ma.MaskedArray):
-#         # We assume that the masked value are already -1, for speed
-#         arr = arr.data
+    grid = OccupancyGrid()
+    if isinstance(arr, np.ma.MaskedArray):
+        # We assume that the masked value are already -1, for speed
+        arr = arr.data
 
-#     grid.data = Array('b', arr.ravel().astype(np.int8))
-#     grid.info = info or MapMetaData()
-#     grid.info.height = arr.shape[0]
-#     grid.info.width = arr.shape[1]
-#     grid.info.geometry_msgs/Pose origin = (x,y,0)
+    grid.data = Array('b', arr.ravel().astype(np.int8))
+    grid.info = info or MapMetaData()
+    grid.info.height = arr.shape[0]
+    grid.info.width = arr.shape[1]
+    grid.info.geometry_msgs/Pose origin = (x,y,0)
 
 #     return grid
 if __name__ == '__main__':
