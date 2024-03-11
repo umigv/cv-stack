@@ -4,7 +4,7 @@
   <name>drivable_area</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="kanishkkandoi52@gmail.com">Arnav Shah</maintainer>
+  <maintainer email="arnshah@umich.edu">Arnav Shah</maintainer>
   <license>Appache-2.0</license>
 
   <depend>rclpy</depend>
