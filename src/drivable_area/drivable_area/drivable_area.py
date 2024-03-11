@@ -14,7 +14,8 @@ from math import radians, cos
 
 
 
-model = YOLO('drivable_area/drivable_area/utils/nov13.pt')
+lane_model = YOLO('drivable_area/drivable_area/utils/LLOnly180ep.pt')
+hole_model = YOLO('drivable_area/drivable_area/utils/potholesonly100epochs.pt')
 
 class CameraProperties(object):
     functional_limit = radians(70.0)
@@ -118,28 +119,54 @@ class DrivableArea(Node):
 
         self.publisher = self.create_publisher(OccupancyGrid, 'occupancy_grid', 10)
 
+    def get_occupancy_grid(self, frame):
+        
+        r_lane = lane_model.predict(frame, conf=0.7)[0]
+        # lane_annotated_frame = r_lane.plot()
+        image_width, image_height = frame.shape[0], frame.shape[1]
+        
+        occupancy_grid = np.zeros((image_height, image_width))
+        r_lane = lane_model.predict(frame, conf=0.50)[0]
+        r_hole = hole_model.predict(frame, conf=0.25)
 
+        
+        if r_lane.masks is not None:
+            if(len(r_lane.masks.xy) != 0):
+                segment = r_lane.masks.xy[0]
+                segment_array = np.array([segment], dtype=np.int32)
+                cv2.fillPoly(occupancy_grid, [segment_array], color=(255, 255, 255))
+
+        if r_hole.boxes is not None:
+            for segment in r_hole.boxes.xyxyn:
+                x_min, y_min, x_max, y_max = segment
+                vertices = np.array([[x_min*image_width, y_min*image_height], 
+                                    [x_max*image_width, y_min*image_height], 
+                                    [x_max*image_width, y_max*image_height], 
+                                    [x_min*image_width, y_max*image_height]], dtype=np.int32)
+                cv2.fillPoly(occupancy_grid, [vertices], color=(0, 0, 0))
+        
+        
     def listener_callback(self, msg):
         
         #converts Image message to cv2 type
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
         # runs YOLO predictions on the cv2 image
-        results = model.predict(frame, conf=0.25)
-        masks = results[0].masks.xy
+        # results = lane_model.predict(frame, conf=0.25)
+        # masks = results[0].masks.xy
         #print(masks)
         
-        grid = np.zeros((frame.shape[0], frame.shape[1]))
-        print(grid.shape)
+        # grid = np.zeros((frame.shape[0], frame.shape[1]))
+        # print(grid.shape)
     
-        for mask in masks:
-            mask = np.array(mask, dtype=np.int32)
-            instance_mask = np.ones((frame.shape[0], frame.shape[1]))
-            cv2.fillPoly(instance_mask, [mask], 0)
-            np.logical_or(grid, instance_mask)
+        # for mask in masks:
+        #     mask = np.array(mask, dtype=np.int32)
+        #     instance_mask = np.ones((frame.shape[0], frame.shape[1]))
+        #     cv2.fillPoly(instance_mask, [mask], 0)
+        #     np.logical_or(grid, instance_mask)
             
-        occupancy_grid_display = grid.astype(np.int8) * 255
-
+        # occupancy_grid_display = grid.astype(np.int8) * 255
+        occupancy_grid_display = self.get_occupancy_grid(frame)
         transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occupancy_grid_display, self.zed)
 
         maxHeight = int(maxHeight)
