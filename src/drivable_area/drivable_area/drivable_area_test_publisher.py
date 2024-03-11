@@ -6,16 +6,16 @@ from rclpy.node import Node
 from cv_bridge import CvBridge
 
 
-video = cv2.VideoCapture("src/drivable_area/drivable_area/utils/comp23_2.mp4")
+video = cv2.VideoCapture("drivable_area/drivable_area/utils/comp23_2.mp4")
 
 
 fps = int(video.get(cv2.CAP_PROP_FPS))
 width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('output_video.avi', fourcc, fps, (width, height), isColor=True)
-out2 = cv2.VideoWriter('occupancy_grid.avi', fourcc, fps, (width, height), isColor=True)
+# fourcc = cv2.VideoWriter_fourcc(*'XVID')
+# out = cv2.VideoWriter('output_video.avi', fourcc, fps, (width, height), isColor=True)
+# out2 = cv2.VideoWriter('occupancy_grid.avi', fourcc, fps, (width, height), isColor=True)
 
 class MinimalPublisher(Node):
 

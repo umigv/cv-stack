@@ -1,6 +1,6 @@
-import cv2
-import numpy as np
 from math import radians, cos
+import numpy as np
+import cv2
 
 class CameraProperties(object):
     functional_limit = radians(70.0)
@@ -48,24 +48,22 @@ class CameraProperties(object):
         return min(CameraProperties.functional_limit - self.cameraTilt + self.fov_vert/2.0, self.fov_vert)
 
 def getBirdView(image, cp):
-    if (cp.matrix is None):
-        rows, columns = image.shape[:2]
-        if columns == 1280:
-            columns = 1344
-        if rows == 720:
-            rows = 752
-        min_angle = 0.0
-        max_angle = cp.compute_max_angle()
-        min_index = cp.compute_min_index(rows, max_angle)
-        image = image[min_index:, :]
-        rows = image.shape[0]
+    rows, columns = image.shape[:2]
+    print(rows, columns)
+    if columns == 1280:
+        columns = 1344
+    if rows == 720:
+        rows = 752
+    min_angle = 0.0
+    max_angle = cp.compute_max_angle()
+    min_index = cp.compute_min_index(rows, max_angle)
+    image = image[min_index:, :]
+    rows = image.shape[0]
 
-        src_quad = cp.src_quad(rows, columns)
-        dst_quad = cp.dst_quad(rows, columns, min_angle, max_angle)
-        return perspective(image, src_quad, dst_quad, cp)
-    else:
-        image = image[cp.minIndex:, :]
-        return cv2.warpPerspective(image, cp.matrix, (cp.maxWidth, cp.maxHeight))
+    src_quad = cp.src_quad(rows, columns)
+    dst_quad = cp.dst_quad(rows, columns, min_angle, max_angle)
+    warped, bottomLeft, bottomRight, topRight, topLeft = perspective(image, src_quad, dst_quad, cp)
+    return warped, bottomLeft, bottomRight, topRight, topLeft, cp.maxWidth, cp.maxHeight
 
 def perspective(image, src_quad, dst_quad, cp):
     bottomLeft, bottomRight, topLeft, topRight = dst_quad
@@ -83,11 +81,5 @@ def perspective(image, src_quad, dst_quad, cp):
 
     warped = cv2.warpPerspective(image, matrix1, (cp.maxWidth, cp.maxHeight))
 
-    mask = np.full((cp.maxHeight, cp.maxWidth), -1, dtype=np.float32)
 
-    trapezoid = np.array([bottomLeft, bottomRight, topRight, topLeft], dtype = 'int32')
-    cv2.fillConvexPoly(mask, trapezoid, 0)
-
-    warped += mask
-
-    return warped
+    return warped, bottomLeft, bottomRight, topRight, topLeft
