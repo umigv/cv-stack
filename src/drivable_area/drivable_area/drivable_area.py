@@ -124,7 +124,7 @@ class DrivableArea(Node):
         
         r_lane = lane_model.predict(frame, conf=0.5)[0]
         # lane_annotated_frame = r_lane.plot()
-        image_width, image_height = frame.shape[0], frame.shape[1]
+        image_width, image_height = frame.shape[1], frame.shape[0]
         
         occupancy_grid = np.zeros((image_height, image_width))
         r_hole = hole_model.predict(frame, conf=0.25)[0]
@@ -146,7 +146,7 @@ class DrivableArea(Node):
                 cv2.fillPoly(occupancy_grid, [vertices], color=(0, 0, 0))
 
         buffer_area = np.sum(occupancy_grid)//255
-        buffer_time = math.exp(-buffer_area/(image_width*image_height)-0.7)# between 1 and 1/e
+        buffer_time = math.exp(-buffer_area/(image_width*image_height)-0.7)
         return occupancy_grid, buffer_time
         
     def listener_callback(self, msg):
