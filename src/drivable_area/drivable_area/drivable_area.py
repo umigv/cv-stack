@@ -134,7 +134,7 @@ class DrivableArea(Node):
             if(len(r_lane.masks.xy) != 0):
                 segment = r_lane.masks.xy[0]
                 segment_array = np.array([segment], dtype=np.int32)
-                cv2.fillPoly(occupancy_grid, [segment_array], color=(255, 255, 255))
+                cv2.fillPoly(occupancy_grid, [segment_array], 255)
 
         if r_hole.boxes is not None:
             for segment in r_hole.boxes.xyxyn:
