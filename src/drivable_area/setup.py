@@ -14,7 +14,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Arnav Shah',
-    maintainer_email='kanishkkandoi52@gmail.com',
+    maintainer_email='arnshah@umich.edu',
     description='TODO: Package description',
     license='Appache-2.0',
     tests_require=['pytest'],

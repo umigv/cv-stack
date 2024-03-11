@@ -23,6 +23,7 @@ class TestSubscriber(Node):
         height = msg.info.height
         arr = np.array(data).reshape((height, width))
         self.get_logger().info('Numpy array shape: %s' % str(arr.shape))
+        np.savetxt('occupancy_grid.txt', arr, fmt='%d')
 
 
 def main(args=None):
