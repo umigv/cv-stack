@@ -11,11 +11,12 @@ from nav_msgs.msg import OccupancyGrid, MapMetaData
 from array import array as Array
 from std_msgs.msg import Header
 from math import radians, cos
+import math
 
 
 
-lane_model = YOLO('drivable_area/drivable_area/utils/LLOnly180ep.pt')[0]
-hole_model = YOLO('drivable_area/drivable_area/utils/potholesonly100epochs.pt')[0]
+lane_model = YOLO('drivable_area/drivable_area/utils/LLOnly180ep.pt')
+hole_model = YOLO('drivable_area/drivable_area/utils/potholesonly100epochs.pt')
 
 class CameraProperties(object):
     functional_limit = radians(70.0)
@@ -121,13 +122,12 @@ class DrivableArea(Node):
 
     def get_occupancy_grid(self, frame):
         
-        r_lane = lane_model.predict(frame, conf=0.7)[0]
+        r_lane = lane_model.predict(frame, conf=0.5)[0]
         # lane_annotated_frame = r_lane.plot()
         image_width, image_height = frame.shape[0], frame.shape[1]
         
         occupancy_grid = np.zeros((image_height, image_width))
-        r_lane = lane_model.predict(frame, conf=0.50)[0]
-        r_hole = hole_model.predict(frame, conf=0.25)
+        r_hole = hole_model.predict(frame, conf=0.25)[0]
 
         
         if r_lane.masks is not None:
@@ -145,8 +145,9 @@ class DrivableArea(Node):
                                     [x_min*image_width, y_max*image_height]], dtype=np.int32)
                 cv2.fillPoly(occupancy_grid, [vertices], color=(0, 0, 0))
 
-        # buffer_time = math.exp(-buffer_area/(image_width*image_height)-0.7)# between 1 and 1/e
-        return occupancy_grid
+        buffer_area = np.sum(occupancy_grid)//255
+        buffer_time = math.exp(-buffer_area/(image_width*image_height)-0.7)# between 1 and 1/e
+        return occupancy_grid, buffer_time
         
     def listener_callback(self, msg):
         
@@ -168,7 +169,7 @@ class DrivableArea(Node):
         #     np.logical_or(grid, instance_mask)
             
         # occupancy_grid_display = grid.astype(np.int8) * 255
-        occupancy_grid_display = self.get_occupancy_grid(frame)
+        occupancy_grid_display, buffer_time = self.get_occupancy_grid(frame)
         transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occupancy_grid_display, self.zed)
 
         maxHeight = int(maxHeight)
