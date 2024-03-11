@@ -14,8 +14,8 @@ from math import radians, cos
 
 
 
-lane_model = YOLO('drivable_area/drivable_area/utils/LLOnly180ep.pt')
-hole_model = YOLO('drivable_area/drivable_area/utils/potholesonly100epochs.pt')
+lane_model = YOLO('drivable_area/drivable_area/utils/LLOnly180ep.pt')[0]
+hole_model = YOLO('drivable_area/drivable_area/utils/potholesonly100epochs.pt')[0]
 
 class CameraProperties(object):
     functional_limit = radians(70.0)
@@ -144,7 +144,9 @@ class DrivableArea(Node):
                                     [x_max*image_width, y_max*image_height], 
                                     [x_min*image_width, y_max*image_height]], dtype=np.int32)
                 cv2.fillPoly(occupancy_grid, [vertices], color=(0, 0, 0))
-        
+
+        # buffer_time = math.exp(-buffer_area/(image_width*image_height)-0.7)# between 1 and 1/e
+        return occupancy_grid
         
     def listener_callback(self, msg):
         
