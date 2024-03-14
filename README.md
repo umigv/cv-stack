@@ -23,3 +23,12 @@ Notes:
 - add padding to include position of robot in numpy occupancy grid
 - header data of occupancy grid data: label as ????
 - https://ros2-industrial-workshop.readthedocs.io/en/latest/_source/basics/ROS2-Simple-Publisher-Subscriber.html#build-and-run
+
+  # cv-nav-integration
+Goal: CV output to Nav an occupancy grid of non-drivable area for each frame. Each frame's occupancy grid are ultimately combined to form a "world occupancy grid". 
+
+Challenges: computational efficiency +  converting local frame to global frame where the relative position of the local origin is unknown.
+
+Resources: 
+https://docs.google.com/document/d/1lL_PE1D-wrfgzJdFESzRF_aXDcSKWAU45HWH284obUQ/edit?usp=sharing
+
