@@ -6,7 +6,7 @@ from rclpy.node import Node
 from cv_bridge import CvBridge
 
 
-video = cv2.VideoCapture("drivable_area/drivable_area/utils/comp23_2.mp4")
+video = cv2.VideoCapture("drivable_area/drivable_area/utils/IMG_7493.mp4")
 
 
 fps = int(video.get(cv2.CAP_PROP_FPS))
