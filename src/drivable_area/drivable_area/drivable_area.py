@@ -12,6 +12,7 @@ from array import array as Array
 from std_msgs.msg import Header
 from math import radians, cos
 import math
+import time
 
 
 
@@ -129,12 +130,13 @@ class DrivableArea(Node):
         occupancy_grid = np.zeros((image_height, image_width))
         r_hole = hole_model.predict(frame, conf=0.25)[0]
 
-        
+        time_of_frame = 0
         if r_lane.masks is not None:
             if(len(r_lane.masks.xy) != 0):
                 segment = r_lane.masks.xy[0]
                 segment_array = np.array([segment], dtype=np.int32)
                 cv2.fillPoly(occupancy_grid, [segment_array], 255)
+                time_of_frame = time.time()
 
         if r_hole.boxes is not None:
             for segment in r_hole.boxes.xyxyn:
@@ -147,12 +149,13 @@ class DrivableArea(Node):
 
         buffer_area = np.sum(occupancy_grid)//255
         buffer_time = math.exp(-buffer_area/(image_width*image_height)-0.7)
-        return occupancy_grid, buffer_time
+        return occupancy_grid, buffer_time, time_of_frame
         
     def listener_callback(self, msg):
         
         #converts Image message to cv2 type
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        frame = cv2.resize(frame, (1280, 720))
 
         # runs YOLO predictions on the cv2 image
         # results = lane_model.predict(frame, conf=0.25)
@@ -169,7 +172,17 @@ class DrivableArea(Node):
         #     np.logical_or(grid, instance_mask)
             
         # occupancy_grid_display = grid.astype(np.int8) * 255
-        occupancy_grid_display, buffer_time = self.get_occupancy_grid(frame)
+        occupancy_grid_display, buffer_time, time_of_frame = self.get_occupancy_grid(frame)
+        total = np.sum(occupancy_grid_display)
+        curr_time = time.time()
+        if total == 0:
+            if curr_time - time_of_frame < buffer_time:
+                occupancy_grid_display = memory_buffer
+            else:
+                occupancy_grid_display.fill(255)
+        else:
+            memory_buffer = occupancy_grid_display
+
         transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occupancy_grid_display, self.zed)
 
         maxHeight = int(maxHeight)
