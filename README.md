@@ -1,3 +1,9 @@
+TODO:
+- Test on Jetson
+- Test with Zed
+- Clean up Code
+
+
 Current: 
 - script runs YOLOP model on saved video + creates a replication with black pixels denoting non-drivable area
 - established bare bones subscriber + publisher nodes
