@@ -160,7 +160,7 @@ class DrivableArea(Node):
         # runs YOLO predictions on the cv2 image
         # results = lane_model.predict(frame, conf=0.25)
         # masks = results[0].masks.xy
-        #print(masks)
+        # print(masks)
         
         # grid = np.zeros((frame.shape[0], frame.shape[1]))
         # print(grid.shape)
@@ -219,7 +219,7 @@ class DrivableArea(Node):
         grid.info.resolution = self.desired_size
         grid.info.width = combined_arr.shape[1]
         grid.info.height = combined_arr.shape[0]
-        grid.info.origin.position.x = float(10)
+        grid.info.origin.position.x = float(34)
         grid.info.origin.position.y = float(85)
 
         grid.data = Array('b', combined_arr.ravel().astype(np.int8))
