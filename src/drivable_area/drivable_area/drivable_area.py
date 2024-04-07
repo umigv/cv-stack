@@ -13,8 +13,12 @@ import time
 from drivable_area.bev import CameraProperties, getBirdView
 
 # Load the YOLO models for lane and pothole detection
-lane_model = YOLO('drivable_area/drivable_area/utils/LLOnly180ep.pt')
-hole_model = YOLO('drivable_area/drivable_area/utils/potholesonly100epochs.pt')
+lane_model = YOLO('src/drivable_area/drivable_area/utils/LLOnly180ep.pt')
+hole_model = YOLO('src/drivable_area/drivable_area/utils/potholesonly100epochs.pt')
+
+UNKNOWN = -1
+OCCUPIED = 100
+FREE = 0
 
 class DrivableArea(Node):
     def __init__(self):
@@ -131,6 +135,13 @@ class DrivableArea(Node):
 
         # Concatenate the robot occupancy grid to the occupancy grid
         combined_arr = np.vstack((resized_image, rob_arr))
+
+        combined_arr = np.where(combined_arr==0, 3, combined_arr)
+        combined_arr = np.where(combined_arr==1, 0, combined_arr)
+        combined_arr = np.where(combined_arr==3, 1, combined_arr)
+
+        # np.savetxt('occupancy_grid.txt', combined_arr, fmt='%d')
+        
         self.send_occupancy_grid(combined_arr)
 
     def send_occupancy_grid(self, array):
@@ -139,9 +150,9 @@ class DrivableArea(Node):
         grid.header.stamp = self.get_clock().now().to_msg()
         grid.header.frame_id = 'map'
         grid.info = MapMetaData()
-        grid.info.resolution = 0.05
-        grid.info.width = 169
-        grid.info.height = 22
+        grid.info.resolution = self.desired_size
+        grid.info.width = array.shape[1]
+        grid.info.height = array.shape[0]
         grid.info.origin.position.x = 34.0
         grid.info.origin.position.y = 85.0
         grid.info.origin.position.z = 0.0
