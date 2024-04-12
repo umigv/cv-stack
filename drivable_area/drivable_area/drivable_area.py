@@ -27,7 +27,7 @@ class DrivableArea(Node):
         # the topic 'url' should be changed to a more specific topic name
         self.subscription = self.create_subscription(
             Image,
-            'zed_image',
+            '/zed/image_raw',
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
