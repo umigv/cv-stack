@@ -19,13 +19,12 @@ class DrivableArea(Node):
         super().__init__('drivable_area')
         
 
-        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, clean_session=False)
+        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
         self.client.on_message = self.on_message
-        self.host = "35.1.249.209"
-        self.port = 1883
+        self.host = "35.3.23.153"
+        self.port = 1884
         self.client.connect(self.host, self.port)
         self.client.subscribe("zed_image", qos=0)
-        self.client.loop_forever()
 
         self.zed = CameraProperties(54, 68.0, 101.0, 68.0)
         self.curr_pix_size = 0.006
@@ -37,6 +36,7 @@ class DrivableArea(Node):
 
         # Create a publisher that publishes OccupancyGrid messages on the 'occupancy_grid' topic
         self.publisher = self.create_publisher(OccupancyGrid, 'occupancy_grid', 10)
+        self.client.loop_forever()
 
     
     def get_occupancy_grid(self, detection):
@@ -66,30 +66,13 @@ class DrivableArea(Node):
 
     def on_message(self, client, userdata, message):
         if message.topic == "zed_image":
-            print("Received message '" + str(message.payload) + "' on topic " + message.topic)
-            #self.listener_callback(message)
+            # print("Received message '" + str(message.payload) + "' on topic " + message.topic)
+            self.listener_callback(message)
     
     def listener_callback(self, message):
-        payload = message.payload.decode("utf-8")
-    
-        msg = json.loads(payload)
+        occ = np.array(json.loads(message.payload.decode()))
 
-        occupancy_grid_display, buffer_time, time_of_frame = self.get_occupancy_grid(msg)
-
-        total = np.sum(occupancy_grid_display)
-        curr_time = time.time()
-
-        # If the occupancy grid is undetectable, display the previous frame
-        if total == 0:
-            if curr_time - time_of_frame < buffer_time:
-                occupancy_grid_display = memory_buffer
-            else:
-                occupancy_grid_display.fill(255)
-        else:
-            memory_buffer = occupancy_grid_display
-
-        # Get the bird's eye view of the occupancy grid
-        transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occupancy_grid_display, self.zed)
+        transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occ, self.zed)
 
         maxHeight = int(maxHeight)
         maxWidth = int(maxWidth)

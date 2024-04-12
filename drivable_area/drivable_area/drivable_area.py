@@ -43,14 +43,14 @@ class DrivableArea(Node):
     def get_occupancy_grid(self, frame):
         
         # Predict the lane
-        r_lane = lane_model.predict(frame, conf=0.5)[0]
+        r_lane = lane_model.predict(frame, conf=0.5, device='cpu')[0]
         image_width, image_height = frame.shape[1], frame.shape[0]
         
         # Create an empty occupancy grid
         occupancy_grid = np.zeros((image_height, image_width))
 
         # Predict the potholes
-        r_hole = hole_model.predict(frame, conf=0.25)[0]
+        r_hole = hole_model.predict(frame, conf=0.25, device='cpu')[0]
 
         # If the lane is detected, fill the occupancy grid with the lane and mark the undrivable area as occupied
         time_of_frame = 0
