@@ -13,8 +13,8 @@ import time
 from drivable_area.bev import CameraProperties, getBirdView
 
 # Load the YOLO models for lane and pothole detection
-lane_model = YOLO('drivable_area/drivable_area/utils/LLOnly180ep.pt')
-hole_model = YOLO('drivable_area/drivable_area/utils/potholesonly100epochs.pt')
+lane_model = YOLO('src/cv-stack/drivable_area/utils/april9120sLLO.pt')
+hole_model = YOLO('src/cv-stack/drivable_area/utils/potholesonly100epochs.pt')
 
 UNKNOWN = -1
 OCCUPIED = 100
