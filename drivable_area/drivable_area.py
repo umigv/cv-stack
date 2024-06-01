@@ -13,8 +13,8 @@ import time
 from drivable_area.bev import CameraProperties, getBirdView
 
 # Load the YOLO models for lane and pothole detection
-lane_model = YOLO('drivable_area/drivable_area/utils/LLOnly180ep.pt')
-hole_model = YOLO('drivable_area/drivable_area/utils/potholesonly100epochs.pt')
+lane_model = YOLO('src/cv-stack//drivable_area/utils/LLOnly180ep.pt')
+hole_model = YOLO('src/cv-stack//drivable_area/utils/potholesonly100epochs.pt')
 
 UNKNOWN = -1
 OCCUPIED = 100
@@ -25,6 +25,7 @@ class DrivableArea(Node):
         super().__init__('drivable_area')
         
         # the topic 'url' should be changed to a more specific topic name
+        self.time_of_frame = time.time()
         self.subscription = self.create_subscription(
             Image,
             '/zed/image_raw',
@@ -35,8 +36,10 @@ class DrivableArea(Node):
         self.zed = CameraProperties(63, 68.0, 101.0, 60.0)
         self.curr_pix_size = 0.0055
         self.desired_size = 0.05
+        self.image_height = 720
+        self.image_width = 1280
         self.scale_factor = self.curr_pix_size / self.desired_size
-
+        self.memory_buffer = np.zeros((self.image_height, self.image_width))
         # Create a publisher that publishes OccupancyGrid messages on the 'occupancy_grid' topic
         self.publisher = self.create_publisher(OccupancyGrid, 'occupancy_grid', 10)
 
@@ -53,13 +56,17 @@ class DrivableArea(Node):
         r_hole = hole_model.predict(frame, conf=0.25, device='cpu')[0]
 
         # If the lane is detected, fill the occupancy grid with the lane and mark the undrivable area as occupied
-        time_of_frame = 0
+        # time_of_frame = 0
         if r_lane.masks is not None:
             if(len(r_lane.masks.xy) != 0):
                 segment = r_lane.masks.xy[0]
                 segment_array = np.array([segment], dtype=np.int32)
                 cv2.fillPoly(occupancy_grid, [segment_array], 255)
                 time_of_frame = time.time()
+
+        for i in range(occupancy_grid.shape[1]):
+            if np.any(occupancy_grid[-100:, i]):
+                occupancy_grid[-35:, i] = 255
 
         # If the potholes are detected, put a mask of the potholes on the occupancy grid and mark the area as occupied
         if r_hole.boxes is not None:
@@ -74,7 +81,7 @@ class DrivableArea(Node):
         # Calculate the buffer time
         buffer_area = np.sum(occupancy_grid)//255
         buffer_time = math.exp(-buffer_area/(image_width*image_height)-0.7)
-        return occupancy_grid, buffer_time, time_of_frame
+        return occupancy_grid, buffer_time#, time_of_frame
         
     def listener_callback(self, msg):
         
@@ -85,18 +92,33 @@ class DrivableArea(Node):
         frame = cv2.resize(frame, (1280, 720))
 
         # Get the occupancy grid
-        occupancy_grid_display, buffer_time, time_of_frame = self.get_occupancy_grid(frame)
+        occupancy_grid_display, buffer_time = self.get_occupancy_grid(frame)
         total = np.sum(occupancy_grid_display)
         curr_time = time.time()
 
         # If the occupancy grid is undetectable, display the previous frame
+        # if total == 0:
+        #     if curr_time - time_of_frame < buffer_time:
+        #         occupancy_grid_display = memory_buffer
+        #     else:
+        #         occupancy_grid_display.fill(255)
+        # else:
+        #     memory_buffer = occupancy_grid_display
+
         if total == 0:
-            if curr_time - time_of_frame < buffer_time:
-                occupancy_grid_display = memory_buffer
+            if curr_time - self.time_of_frame < buffer_time:
+                occupancy_grid_display = self.memory_buffer
             else:
                 occupancy_grid_display.fill(255)
         else:
-            memory_buffer = occupancy_grid_display
+            switch = np.sum(np.logical_and(self.memory_buffer, np.logical_not(occupancy_grid_display)))/(np.sum(self.memory_buffer)/255)
+            if switch >= 0.8 and curr_time - self.time_of_frame < 4:
+                occupancy_grid_display = self.memory_buffer
+            elif switch >= 0.8 and curr_time - self.time_of_frame < 8:
+                occupancy_grid_display.fill(255)
+            else:
+                self.memory_buffer = occupancy_grid_display
+                self.time_of_frame = time.time()
 
         # Get the bird's eye view of the occupancy grid
         transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occupancy_grid_display, self.zed)
@@ -142,6 +164,7 @@ class DrivableArea(Node):
         print(np.where(combined_arr==2))
 
         # np.savetxt('occupancy_grid.txt', combined_arr, fmt='%d')
+        combined_arr = np.flipud(combined_arr)
         
         self.send_occupancy_grid(combined_arr)
 

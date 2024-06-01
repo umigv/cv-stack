@@ -17,10 +17,10 @@ class DrivableArea(Node):
     def __init__(self):
         super().__init__('drivable_area')
         
-
+        self.time_of_frame = time.time()
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
         self.client.on_message = self.on_message
-        self.host = "35.3.23.153"
+        self.host = "172.20.10.13"
         self.port = 1884
         self.client.connect(self.host, self.port)
         self.client.subscribe("zed_image", qos=0)
@@ -42,14 +42,18 @@ class DrivableArea(Node):
     def get_occupancy_grid(self, lane, pothole):
         occupancy_grid = np.zeros((self.image_height, self.image_width))
 
-        time_of_frame = 0
+        # time_of_frame = 0
         if lane['masks'] is not None:
             if(len(lane['masks']['xy']) != 0):
                 segment = lane['masks']['xy']
                 segment_array = np.array([segment], dtype=np.int32)
                 cv2.fillPoly(occupancy_grid, [segment_array], color=(255, 0, 0))
-                time_of_frame = time.time()
-                print("Lane detected")
+                # time_of_frame = time.time()
+                # print("Lane detected")
+
+        for i in range(occupancy_grid.shape[1]):
+            if np.any(occupancy_grid[-100:, i]):
+                occupancy_grid[-35:, i] = 255
         
         if pothole['boxes'] is not None:
             for segment in pothole['boxes']['xyxyn']:
@@ -59,11 +63,11 @@ class DrivableArea(Node):
                                     [x_max*self.image_width, y_max*self.image_height], 
                                     [x_min*self.image_width, y_max*self.image_height]], dtype=np.int32)
                 cv2.fillPoly(occupancy_grid, [vertices], color=(0, 0, 0))
-                print("Pothole detected")
+                # print("Pothole detected")
 
         buffer_area = np.sum(occupancy_grid)//255
         buffer_time = math.exp(-buffer_area/(self.image_width*self.image_height)-0.7)
-        return occupancy_grid, buffer_time, time_of_frame
+        return occupancy_grid, buffer_time#, time_of_frame
 
 
     def on_message(self, client, userdata, message):
@@ -80,19 +84,36 @@ class DrivableArea(Node):
         lane = json_message["lane"]
         pothole = json_message["hole"]
 
-        occ, buffer_time, time_of_frame = self.get_occupancy_grid(lane, pothole)
+        occ, buffer_time = self.get_occupancy_grid(lane, pothole)
 
 
         curr_time = time.time()
         total = np.sum(occ)
 
+        # if total == 0:
+        #     if curr_time - time_of_frame < buffer_time:
+        #         occ = self.memory_buffer
+        #     else:
+        #         occ.fill(255)
+        # else:
+        #     self.memory_buffer = occ
+
         if total == 0:
-            if curr_time - time_of_frame < buffer_time:
+            if curr_time - self.time_of_frame < buffer_time:
                 occ = self.memory_buffer
             else:
                 occ.fill(255)
         else:
-            self.memory_buffer = occ
+            switch = np.sum(np.logical_and(self.memory_buffer, np.logical_not(occ)))/(np.sum(self.memory_buffer)/255)
+            if switch >= 0.8 and curr_time - self.time_of_frame < 4:
+                occ = self.memory_buffer
+            elif switch >= 0.8 and curr_time - self.time_of_frame < 8:
+                occ.fill(255)
+            else:
+                self.memory_buffer = occ
+                self.time_of_frame = time.time()
+
+        
 
         transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occ, self.zed)
 
@@ -132,8 +153,9 @@ class DrivableArea(Node):
         combined_arr = np.vstack((resized_image, rob_arr))
         combined_arr = np.where(combined_arr==0, 3, combined_arr)
         combined_arr = np.where(combined_arr==1, 0, combined_arr)
-        combined_arr = np.where(combined_arr==3, 100, combined_arr)
-        print(np.where(combined_arr==2))
+        combined_arr = np.where(combined_arr==3, 1, combined_arr)
+        # np.savetxt('occupancy_grid.txt', combined_arr, fmt='%d')
+        combined_arr = np.flipud(combined_arr)
         self.send_occupancy_grid(combined_arr)
 
     def send_occupancy_grid(self, array):
