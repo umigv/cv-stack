@@ -32,8 +32,8 @@ class DrivableArea(Node):
             10)
         self.subscription  # prevent unused variable warning
         self.bridge = CvBridge()
-        self.zed = CameraProperties(64, 68.0, 101.0, 60.0)
-        self.curr_pix_size = 0.016
+        self.zed = CameraProperties(63, 68.0, 101.0, 60.0)
+        self.curr_pix_size = 0.0055
         self.desired_size = 0.05
         self.scale_factor = self.curr_pix_size / self.desired_size
 
@@ -130,8 +130,8 @@ class DrivableArea(Node):
         resized_image = cv2.resize(transformed_image, new_size, interpolation = cv2.INTER_NEAREST_EXACT)
 
         # Create a robot occupancy grid to display the robot's position
-        rob_arr = np.full((17, new_size[0]), -1, dtype=np.int8)
-        rob_arr[8][85] = 2
+        rob_arr = np.full((26, new_size[0]), -1, dtype=np.int8)
+        rob_arr[13][77] = 2
 
         # Concatenate the robot occupancy grid to the occupancy grid
         combined_arr = np.vstack((resized_image, rob_arr))
@@ -139,6 +139,7 @@ class DrivableArea(Node):
         combined_arr = np.where(combined_arr==0, 3, combined_arr)
         combined_arr = np.where(combined_arr==1, 0, combined_arr)
         combined_arr = np.where(combined_arr==3, 1, combined_arr)
+        print(np.where(combined_arr==2))
 
         # np.savetxt('occupancy_grid.txt', combined_arr, fmt='%d')
         
@@ -154,7 +155,7 @@ class DrivableArea(Node):
         grid.info.width = array.shape[1]
         grid.info.height = array.shape[0]
         grid.info.origin.position.x = 34.0
-        grid.info.origin.position.y = 85.0
+        grid.info.origin.position.y = 73.0
         grid.info.origin.position.z = 0.0
 
         grid.data = Array('b', array.ravel().astype(np.int8))
