@@ -73,8 +73,8 @@ class DrivableArea(Node):
     def update_mask(self, image):
         image = cv2.LUT(image, self.table)
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        lower_bound = np.array([0, 0, 193])
-        upper_bound = np.array([179, 15, 255])
+        lower_bound = np.array([0, 0, 136])
+        upper_bound = np.array([179, 36, 255])
         mask = cv2.inRange(hsv_image, lower_bound, upper_bound)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
