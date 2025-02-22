@@ -38,6 +38,7 @@ class DrivableArea(Node):
         self.desired_size = 0.05
         self.image_height = 720
         self.image_width = 1280
+        self.table = np.array([((i / 255.0) ** (1.0 / 0.3)) * 255 for i in np.arange(0, 256)]).astype("uint8")
         self.scale_factor = self.curr_pix_size / self.desired_size
         self.memory_buffer = np.zeros((self.image_height, self.image_width))
         # Create a publisher that publishes OccupancyGrid messages on the 'occupancy_grid' topic
@@ -70,17 +71,21 @@ class DrivableArea(Node):
         return occupancy_grid, None#, time_of_frame
     
     def update_mask(self, image):
-        # blur = cv2.blur(,(10,10))
+        image = cv2.LUT(image, self.table)
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         lower_bound = np.array([0, 0, 193])
         upper_bound = np.array([179, 15, 255])
         mask = cv2.inRange(hsv_image, lower_bound, upper_bound)
-        mask = cv2.erode(mask, None, iterations=4)
-        mask = cv2.dilate(mask, None, iterations=4)
+        mask = cv2.erode(mask, None, iterations=2)
+        mask = cv2.dilate(mask, None, iterations=2)
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        min_area = 1500 # Adjust based on noise size
+        contoured = np.zeros_like(mask)
+        for cnt in contours:
+            if cv2.contourArea(cnt) > min_area:
+                cv2.drawContours(contoured, [cnt], -1, 255, thickness=cv2.FILLED)
         
-        print(mask.shape)
-        return mask
-        # cv2.imshow('mask', mask)
+        return contoured
         
         
     def listener_callback(self, msg):
