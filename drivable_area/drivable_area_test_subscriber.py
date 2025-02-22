@@ -32,7 +32,7 @@ class TestSubscriber(Node):
         cmap = colors.ListedColormap(['black', 'white', 'red', 'blue'])
 
         plt.imshow(arr, cmap=cmap, origin='lower')
-        plt.colorbar(ticks=[-1, 0, 100, 2], label='Occupancy')
+        plt.colorbar(ticks=[-1, 0, 1, 2], label='Occupancy')
         plt.savefig('occupancy_grid.png')
         plt.clf()
 

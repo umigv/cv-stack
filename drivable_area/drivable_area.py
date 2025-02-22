@@ -11,10 +11,10 @@ from std_msgs.msg import Header
 import math
 import time
 from drivable_area.bev import CameraProperties, getBirdView
+from skimage.draw import polygon
 
 # Load the YOLO models for lane and pothole detection
-lane_model = YOLO('src/cv-stack//drivable_area/utils/LLOnly180ep.pt')
-hole_model = YOLO('src/cv-stack//drivable_area/utils/potholesonly100epochs.pt')
+hole_model = YOLO('drivable_area/drivable_area/utils/potholesonly100epochs.pt')
 
 UNKNOWN = -1
 OCCUPIED = 100
@@ -44,29 +44,15 @@ class DrivableArea(Node):
         self.publisher = self.create_publisher(OccupancyGrid, 'occupancy_grid', 10)
 
     def get_occupancy_grid(self, frame):
-        
-        # Predict the lane
-        r_lane = lane_model.predict(frame, conf=0.5, device='cpu')[0]
         image_width, image_height = frame.shape[1], frame.shape[0]
-        
-        # Create an empty occupancy grid
+        # Initialize grid with unknown (-1)
         occupancy_grid = np.zeros((image_height, image_width))
+        occupancy_grid_lane = self.update_mask(frame)
+        # Mark lane area as free (0) where detected
+        occupancy_grid[occupancy_grid_lane == 255] = 255
 
         # Predict the potholes
         r_hole = hole_model.predict(frame, conf=0.25, device='cpu')[0]
-
-        # If the lane is detected, fill the occupancy grid with the lane and mark the undrivable area as occupied
-        # time_of_frame = 0
-        if r_lane.masks is not None:
-            if(len(r_lane.masks.xy) != 0):
-                segment = r_lane.masks.xy[0]
-                segment_array = np.array([segment], dtype=np.int32)
-                cv2.fillPoly(occupancy_grid, [segment_array], 255)
-                time_of_frame = time.time()
-
-        for i in range(occupancy_grid.shape[1]):
-            if np.any(occupancy_grid[-100:, i]):
-                occupancy_grid[-35:, i] = 255
 
         # If the potholes are detected, put a mask of the potholes on the occupancy grid and mark the area as occupied
         if r_hole.boxes is not None:
@@ -76,12 +62,26 @@ class DrivableArea(Node):
                                     [x_max*image_width, y_min*image_height], 
                                     [x_max*image_width, y_max*image_height], 
                                     [x_min*image_width, y_max*image_height]], dtype=np.int32)
-                cv2.fillPoly(occupancy_grid, [vertices], color=(0, 0, 0))
+                rr, cc = polygon(vertices[:, 1], vertices[:, 0], occupancy_grid.shape)
+                occupancy_grid[rr, cc] = 255
 
         # Calculate the buffer time
-        buffer_area = np.sum(occupancy_grid)//255
-        buffer_time = math.exp(-buffer_area/(image_width*image_height)-0.7)
-        return occupancy_grid, buffer_time#, time_of_frame
+
+        return occupancy_grid, None#, time_of_frame
+    
+    def update_mask(self, image):
+        # blur = cv2.blur(,(10,10))
+        hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        lower_bound = np.array([0, 0, 193])
+        upper_bound = np.array([179, 15, 255])
+        mask = cv2.inRange(hsv_image, lower_bound, upper_bound)
+        mask = cv2.erode(mask, None, iterations=4)
+        mask = cv2.dilate(mask, None, iterations=4)
+        
+        print(mask.shape)
+        return mask
+        # cv2.imshow('mask', mask)
+        
         
     def listener_callback(self, msg):
         
@@ -105,20 +105,20 @@ class DrivableArea(Node):
         # else:
         #     memory_buffer = occupancy_grid_display
 
-        if total == 0:
-            if curr_time - self.time_of_frame < buffer_time:
-                occupancy_grid_display = self.memory_buffer
-            else:
-                occupancy_grid_display.fill(255)
-        else:
-            switch = np.sum(np.logical_and(self.memory_buffer, np.logical_not(occupancy_grid_display)))/(np.sum(self.memory_buffer)/255)
-            if switch >= 0.8 and curr_time - self.time_of_frame < 4:
-                occupancy_grid_display = self.memory_buffer
-            elif switch >= 0.8 and curr_time - self.time_of_frame < 8:
-                occupancy_grid_display.fill(255)
-            else:
-                self.memory_buffer = occupancy_grid_display
-                self.time_of_frame = time.time()
+        # if total == 0:
+        #     if curr_time - self.time_of_frame < buffer_time:
+        #         occupancy_grid_display = self.memory_buffer
+        #     else:
+        #         occupancy_grid_display.fill(255)
+        # else:
+        #     switch = np.sum(np.logical_and(self.memory_buffer, np.logical_not(occupancy_grid_display)))/(np.sum(self.memory_buffer)/255)
+        #     if switch >= 0.8 and curr_time - self.time_of_frame < 4:
+        #         occupancy_grid_display = self.memory_buffer
+        #     elif switch >= 0.8 and curr_time - self.time_of_frame < 8:
+        #         occupancy_grid_display.fill(255)
+        #     else:
+        #         self.memory_buffer = occupancy_grid_display
+        #         self.time_of_frame = time.time()
 
         # Get the bird's eye view of the occupancy grid
         transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occupancy_grid_display, self.zed)
@@ -131,8 +131,8 @@ class DrivableArea(Node):
         mask = np.full((maxHeight, maxWidth), -1, dtype=np.int8)
         pts =  np.array([bottomLeft, [bottomRight[0] - 17, bottomRight[1]], [topRight[0] - 75, topRight[1]], topLeft])
         pts = pts.astype(np.int32)  # convert points to int32
-        pts = pts.reshape((-1, 1, 2))  # reshape points
-        cv2.fillPoly(mask, [pts], True, 0)
+        rr, cc = polygon(pts[:, 1], pts[:, 0], mask.shape)
+        mask[rr, cc] = 0
 
         # Apply the mask to the occupancy grid
         indicies = np.where(mask == -1)
@@ -158,9 +158,9 @@ class DrivableArea(Node):
         # Concatenate the robot occupancy grid to the occupancy grid
         combined_arr = np.vstack((resized_image, rob_arr))
 
-        combined_arr = np.where(combined_arr==0, 3, combined_arr)
-        combined_arr = np.where(combined_arr==1, 0, combined_arr)
-        combined_arr = np.where(combined_arr==3, 1, combined_arr)
+        # combined_arr = np.where(combined_arr==0, 3, combined_arr)
+        # combined_arr = np.where(combined_arr==1, 0, combined_arr)
+        # combined_arr = np.where(combined_arr==3, 1, combined_arr)
         print(np.where(combined_arr==2))
 
         # np.savetxt('occupancy_grid.txt', combined_arr, fmt='%d')

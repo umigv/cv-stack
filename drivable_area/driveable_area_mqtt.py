@@ -20,9 +20,10 @@ class DrivableArea(Node):
         self.time_of_frame = time.time()
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
         self.client.on_message = self.on_message
-        self.host = "172.20.10.13"
+        self.host = "192.168.191.2"
         self.port = 1884
         self.client.connect(self.host, self.port)
+        print("Connected to MQTT broker")
         self.client.subscribe("zed_image", qos=0)
 
         self.zed = CameraProperties(64, 68.0, 101.0, 60.0)
@@ -32,7 +33,7 @@ class DrivableArea(Node):
 
         self.image_height = 720
         self.image_width = 1280
-        self.memory_buffer = np.zeros((self.image_height, self.image_width))
+        self.memory_buffer = np.full((self.image_height, self.image_width), 255)
 
         # Create a publisher that publishes OccupancyGrid messages on the 'occupancy_grid' topic
         self.publisher = self.create_publisher(OccupancyGrid, 'occupancy_grid', 10)
@@ -72,14 +73,14 @@ class DrivableArea(Node):
 
     def on_message(self, client, userdata, message):
         if message.topic == "zed_image":
-            # print("Received message '" + str(message.payload) + "' on topic " + message.topic)
+            print("Received message '" + str(message.payload) + "' on topic " + message.topic)
             self.listener_callback(message)
+        print("Received message '" + str(message.payload) + "' on topic " + message.topic)
     
     def listener_callback(self, message):
         
         # Get message which contains JSON of the predictions of both models
         json_message = json.loads(message.payload)
-
         # Get the predictions of the YOLO model
         lane = json_message["lane"]
         pothole = json_message["hole"]
@@ -151,9 +152,9 @@ class DrivableArea(Node):
 
         # Concatenate the robot occupancy grid to the occupancy grid
         combined_arr = np.vstack((resized_image, rob_arr))
-        combined_arr = np.where(combined_arr==0, 3, combined_arr)
-        combined_arr = np.where(combined_arr==1, 0, combined_arr)
-        combined_arr = np.where(combined_arr==3, 1, combined_arr)
+        # combined_arr = np.where(combined_arr==0, 3, combined_arr)
+        # combined_arr = np.where(combined_arr==1, 0, combined_arr)
+        # combined_arr = np.where(combined_arr==3, 1, combined_arr)
         # np.savetxt('occupancy_grid.txt', combined_arr, fmt='%d')
         combined_arr = np.flipud(combined_arr)
         self.send_occupancy_grid(combined_arr)
