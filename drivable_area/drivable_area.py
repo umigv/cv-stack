@@ -5,6 +5,7 @@ from cv_bridge import CvBridge
 import cv2
 import numpy as np
 from nav_msgs.msg import OccupancyGrid, MapMetaData
+from geometry_msgs.msg import PoseStamped
 from array import array as Array
 from std_msgs.msg import Header
 from drivable_area.bev import CameraProperties, getBirdView
@@ -96,6 +97,20 @@ class DrivableArea(Node):
             self.config["topics"]["image_subscription"],
             self.listener_callback,
             10)
+        
+        self.pose_subscription = self.create_subscription(
+            PoseStamped,
+            '/zed/zed_node/pose',
+            self.pose_callback,
+            10
+        )
+        self.pose_subscription  # Prevent unused variable warning
+
+        self.robot_position_x = float(0)
+        self.robot_position_y = float(0)
+        self.robot_position_z = float(0)
+        self.robot_orientation = float(0)
+
         self.subscription  # prevent unused variable warning
         self.bridge = CvBridge()
         self.zed = CameraProperties(
@@ -119,6 +134,18 @@ class DrivableArea(Node):
         occupancy_grid[occupancy_grid_lane == 255] = 255
 
         return occupancy_grid
+    
+    def pose_callback(self, msg):
+        # Extract the position and orientation from the pose message
+        position = msg.pose.position
+        orientation = msg.pose.orientation
+
+        # Convert the position to grid coordinates (optional: you may need to apply a transformation if your map frame is different)
+        self.robot_position_x = position.x
+        self.robot_position_y = position.y
+        self.robot_position_z = position.z  # If needed for 3D grids
+
+        self.robot_orientation = orientation
     
     def update_mask(self, image):
         image = cv2.LUT(image, self.table)
@@ -201,9 +228,14 @@ class DrivableArea(Node):
         grid.info.width = array.shape[1]
         grid.info.height = array.shape[0]
         # in reality, the pose of the robot should be used here from the zed topics
-        grid.info.origin.position.x = self.config["grid"]["position"]["x"]
-        grid.info.origin.position.y = self.config["grid"]["position"]["y"]
-        grid.info.origin.position.z = self.config["grid"]["position"]["z"]
+        # grid.info.origin.position.x = self.config["grid"]["position"]["x"]
+        # grid.info.origin.position.y = self.config["grid"]["position"]["y"]
+        # grid.info.origin.position.z = self.config["grid"]["position"]["z"]
+
+        grid.info.origin.position.x = self.robot_position_x
+        grid.info.origin.position.y = self.robot_position_y
+        # grid.info.origin.position.z = self.robot_position_z
+        # grid.info.origin.orientation = self.robot_orientation
 
         grid.data = Array('b', array.ravel().astype(np.int8))
 
