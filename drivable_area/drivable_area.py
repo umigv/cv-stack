@@ -10,6 +10,7 @@ from array import array as Array
 from std_msgs.msg import Header
 from drivable_area.bev import CameraProperties, getBirdView
 from skimage.draw import polygon
+from ultralytics import YOLO
 
 UNKNOWN = -1
 OCCUPIED = 100
@@ -43,6 +44,13 @@ class DrivableArea(Node):
         self.declare_parameter('hsv.lower', [0, 0, 136])
         self.declare_parameter('hsv.upper', [179, 36, 255])
         self.declare_parameter('morph.iterations', 2)
+        # YOLO parameters
+        self.declare_parameter('yolo.lane_model_path', 'src/cv-stack/drivable_area/utils/LLOnly180ep.pt')
+        self.declare_parameter('yolo.hole_model_path', 'src/cv-stack/drivable_area/utils/potholesonly100epochs.pt')
+        self.declare_parameter('yolo.lane_confidence', 0.5)
+        self.declare_parameter('yolo.hole_confidence', 0.25)
+        self.declare_parameter('yolo.lane_extension', 35)
+        self.declare_parameter('yolo.lane_search_height', 100)
         
         # Build config from parameters
         self.config = {
@@ -87,8 +95,21 @@ class DrivableArea(Node):
             },
             "morph": {
                 "iterations": self.get_parameter('morph.iterations').value
+            },
+            "yolo": {
+                "lane_model_path": self.get_parameter('yolo.lane_model_path').value,
+                "hole_model_path": self.get_parameter('yolo.hole_model_path').value,
+                "lane_confidence": self.get_parameter('yolo.lane_confidence').value,
+                "hole_confidence": self.get_parameter('yolo.hole_confidence').value,
+                "lane_extension": self.get_parameter('yolo.lane_extension').value,
+                "lane_search_height": self.get_parameter('yolo.lane_search_height').value
             }
         }
+        
+        # Load YOLO models
+        self.get_logger().info(f"Loading YOLO models from {self.config['yolo']['lane_model_path']} and {self.config['yolo']['hole_model_path']}")
+        self.lane_model = YOLO(self.config["yolo"]["lane_model_path"])
+        self.hole_model = YOLO(self.config["yolo"]["hole_model_path"])
 
         self.image_width = self.config["image"]["width"]
         self.image_height = self.config["image"]["height"]
@@ -130,10 +151,46 @@ class DrivableArea(Node):
     def get_occupancy_grid(self, frame):
         image_width, image_height = frame.shape[1], frame.shape[0]
         occupancy_grid = np.zeros((image_height, image_width))
-        occupancy_grid_lane = self.update_mask(frame)
-        occupancy_grid[occupancy_grid_lane == 255] = 255
-
-        return occupancy_grid
+        
+        # HSV-based detection
+        occupancy_grid_hsv = self.update_mask(frame)
+        
+        # YOLO lane detection
+        r_lane = self.lane_model.predict(frame, conf=self.config["yolo"]["lane_confidence"], device='cpu')[0]
+        
+        # Process lane detection results
+        if r_lane.masks is not None and len(r_lane.masks.xy) != 0:
+            for segment in r_lane.masks.xy:
+                segment_array = np.array([segment], dtype=np.int32)
+                cv2.fillPoly(occupancy_grid, [segment_array], 255)
+            
+        # Extend lanes at the bottom of the image
+        lane_search_height = self.config["yolo"]["lane_search_height"]
+        lane_extension = self.config["yolo"]["lane_extension"]
+        for i in range(occupancy_grid.shape[1]):
+            if np.any(occupancy_grid[-lane_search_height:, i]):
+                occupancy_grid[-lane_extension:, i] = 255
+        
+        # YOLO pothole detection
+        r_hole = self.hole_model.predict(frame, conf=self.config["yolo"]["hole_confidence"], device='cpu')[0]
+        
+        if r_hole.boxes is not None:
+            for segment in r_hole.boxes.xyxyn:
+                x_min, y_min, x_max, y_max = segment
+                vertices = np.array([
+                    [x_min * image_width, y_min * image_height],
+                    [x_max * image_width, y_min * image_height],
+                    [x_max * image_width, y_max * image_height],
+                    [x_min * image_width, y_max * image_height]
+                ], dtype=np.int32)
+                cv2.fillPoly(occupancy_grid, [vertices], color=255)
+        
+        # Combine YOLO and HSV results
+        combined_grid = np.zeros_like(occupancy_grid)
+        combined_grid[occupancy_grid == 255] = 255
+        combined_grid[occupancy_grid_hsv == 255] = 255
+        
+        return combined_grid
     
     def pose_callback(self, msg):
         # Extract the position and orientation from the pose message
