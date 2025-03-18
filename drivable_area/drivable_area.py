@@ -271,7 +271,7 @@ class DrivableArea(Node):
 
         # Concatenate the robot occupancy grid to the occupancy grid
         combined_arr = np.vstack((resized_image, rob_arr))
-        combined_arr = np.flipud(combined_arr)
+        # combined_arr = np.flipud(combined_arr)
         
         self.send_occupancy_grid(combined_arr)
 
