@@ -24,7 +24,7 @@ class TestSubscriber(Node):
         width = msg.info.width
         height = msg.info.height
         arr = np.array(data).reshape((height, width))
-        # arr = np.flipud(arr)
+        arr = np.flipud(arr)
         # arr = np.fliplr(arr)
         self.get_logger().info('Numpy array shape: %s' % str(arr.shape))
         # np.savetxt('occupancy_grid.txt', arr, fmt='%d')

@@ -23,8 +23,8 @@ def generate_launch_description():
         DeclareLaunchArgument('camera.zed_fov_horz', default_value='101.0'),
         DeclareLaunchArgument('camera.zed_camera_tilt', default_value='60.0'),
         # Topics config
-        DeclareLaunchArgument('topics.image_subscription', default_value='/zed/image_raw'),
-        DeclareLaunchArgument('topics.occupancy_grid', default_value='occupancy_grid'),
+        DeclareLaunchArgument('topics.image_subscription', default_value='/zed/zed_node/left/image_rect_color'),
+        DeclareLaunchArgument('topics.occupancy_grid', default_value='/test_occ'),
         # Sizes config
         DeclareLaunchArgument('sizes.desired_size', default_value='0.05'),
         DeclareLaunchArgument('sizes.curr_pix_size', default_value='0.0055'),
@@ -34,7 +34,7 @@ def generate_launch_description():
         # HSV filter config
         DeclareLaunchArgument('hsv.lower', default_value='[0, 0, 136]'),
         DeclareLaunchArgument('hsv.upper', default_value='[179, 36, 255]'),
-        # Morphology config
+        # Morphology config 
         DeclareLaunchArgument('morph.iterations', default_value='2'),
 
         Node(

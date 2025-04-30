@@ -11,6 +11,8 @@ from std_msgs.msg import Header
 from drivable_area.bev import CameraProperties, getBirdView
 from skimage.draw import polygon
 from ultralytics import YOLO
+from drivable_area.occ_grid import occ_grid
+from drivable_area.hsv import hsv
 
 UNKNOWN = -1
 OCCUPIED = 100
@@ -35,7 +37,7 @@ class DrivableArea(Node):
         self.declare_parameter('camera.zed_fov_horz', 101.0)
         self.declare_parameter('camera.zed_camera_tilt', 60.0)
         self.declare_parameter('topics.image_subscription', '/zed/image_raw')
-        self.declare_parameter('topics.occupancy_grid', 'occupancy_grid')
+        self.declare_parameter('topics.occupancy_grid', 'test_occ')
         self.declare_parameter('sizes.desired_size', 0.05)
         self.declare_parameter('sizes.curr_pix_size', 0.0055)
         self.declare_parameter('offsets.polygon_offset_right', 17)
@@ -45,7 +47,7 @@ class DrivableArea(Node):
         self.declare_parameter('hsv.upper', [179, 36, 255])
         self.declare_parameter('morph.iterations', 2)
         # YOLO parameters
-        self.declare_parameter('yolo.lane_model_path', 'src/cv-stack/drivable_area/utils/LLOnly180ep.pt')
+        self.declare_parameter('yolo.lane_model_path', 'src/cv-stack/drivable_area/utils/laneswithcontrast.pt')
         self.declare_parameter('yolo.hole_model_path', 'src/cv-stack/drivable_area/utils/potholesonly100epochs.pt')
         self.declare_parameter('yolo.lane_confidence', 0.5)
         self.declare_parameter('yolo.hole_confidence', 0.25)
@@ -147,29 +149,25 @@ class DrivableArea(Node):
         self.memory_buffer = np.zeros((self.image_height, self.image_width))
         # Create a publisher that publishes OccupancyGrid messages on the 'occupancy_grid' topic
         self.publisher = self.create_publisher(OccupancyGrid, self.config["topics"]["occupancy_grid"], 10)
+        self.final_mask = None
+        self.occ_obj = occ_grid(0, self.config["yolo"]["lane_model_path"]) #occ_grid(video_path, yolo_path)
+        self.hsv_obj = hsv(0)
+
 
     def get_occupancy_grid(self, frame):
         image_width, image_height = frame.shape[1], frame.shape[0]
-        occupancy_grid = np.zeros((image_height, image_width))
+        # occupancy_grid = np.zeros((image_height, image_width))
         
         # HSV-based detection
-        occupancy_grid_hsv = self.update_mask(frame)
-        
-        # YOLO lane detection
-        r_lane = self.lane_model.predict(frame, conf=self.config["yolo"]["lane_confidence"], device='cpu')[0]
-        
-        # Process lane detection results
-        if r_lane.masks is not None and len(r_lane.masks.xy) != 0:
-            for segment in r_lane.masks.xy:
-                segment_array = np.array([segment], dtype=np.int32)
-                cv2.fillPoly(occupancy_grid, [segment_array], 255)
-            
+        combined, dict = self.hsv_obj.get_mask(frame)
+        # print(dict)
+        # print("HSV mask shape: ", combined.shape)
         # Extend lanes at the bottom of the image
         lane_search_height = self.config["yolo"]["lane_search_height"]
         lane_extension = self.config["yolo"]["lane_extension"]
-        for i in range(occupancy_grid.shape[1]):
-            if np.any(occupancy_grid[-lane_search_height:, i]):
-                occupancy_grid[-lane_extension:, i] = 255
+        for i in range(combined.shape[1]):
+            if np.any(combined[-lane_search_height:, i]):
+                combined[-lane_extension:, i] = 255
         
         # YOLO pothole detection
         r_hole = self.hole_model.predict(frame, conf=self.config["yolo"]["hole_confidence"], device='cpu')[0]
@@ -183,14 +181,9 @@ class DrivableArea(Node):
                     [x_max * image_width, y_max * image_height],
                     [x_min * image_width, y_max * image_height]
                 ], dtype=np.int32)
-                cv2.fillPoly(occupancy_grid, [vertices], color=255)
+                cv2.fillPoly(combined, [vertices], color=255)
         
-        # Combine YOLO and HSV results
-        combined_grid = np.zeros_like(occupancy_grid)
-        combined_grid[occupancy_grid == 255] = 255
-        combined_grid[occupancy_grid_hsv == 255] = 255
-        
-        return combined_grid
+        return combined
     
     def pose_callback(self, msg):
         # Extract the position and orientation from the pose message
@@ -203,22 +196,6 @@ class DrivableArea(Node):
         self.robot_position_z = position.z  # If needed for 3D grids
 
         self.robot_orientation = orientation
-    
-    def update_mask(self, image):
-        image = cv2.LUT(image, self.table)
-        hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        lower_bound = np.array(self.config["hsv"]["lower"])
-        upper_bound = np.array(self.config["hsv"]["upper"])
-        mask = cv2.inRange(hsv_image, lower_bound, upper_bound)
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.morph_kernel, iterations=self.config["morph"]["iterations"])
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        min_area = 1500 # Adjust based on noise size
-        contoured = np.zeros_like(mask)
-        for cnt in contours:
-            if cv2.contourArea(cnt) > min_area:
-                cv2.drawContours(contoured, [cnt], -1, 255, thickness=cv2.FILLED)
-        
-        return contoured
         
         
     def listener_callback(self, msg):
@@ -272,6 +249,8 @@ class DrivableArea(Node):
         # Concatenate the robot occupancy grid to the occupancy grid
         combined_arr = np.vstack((resized_image, rob_arr))
         # combined_arr = np.flipud(combined_arr)
+        combined_arr = np.rot90(combined_arr, -1)
+        combined_arr = np.flipud(combined_arr)
         
         self.send_occupancy_grid(combined_arr)
 
