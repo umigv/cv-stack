@@ -11,18 +11,18 @@ def generate_launch_description():
         DeclareLaunchArgument('image.left_border', default_value='66'),
         # Robot config
         DeclareLaunchArgument('robot.grid_height', default_value='26'),
-        DeclareLaunchArgument('robot.row', default_value='13'),
+        DeclareLaunchArgument('robot.row', default_value='14'),
         DeclareLaunchArgument('robot.col', default_value='77'),
         # Grid config
         DeclareLaunchArgument('grid.position.x', default_value='34.0'),
         DeclareLaunchArgument('grid.position.y', default_value='73.0'),
         DeclareLaunchArgument('grid.position.z', default_value='0.0'),
         # Camera config
-        DeclareLaunchArgument('camera.zed_height', default_value='63'),
+        DeclareLaunchArgument('camera.zed_height', default_value='64'),
         DeclareLaunchArgument('camera.zed_fov_vert', default_value='68.0'),
         DeclareLaunchArgument('camera.zed_fov_horz', default_value='101.0'),
-        DeclareLaunchArgument('camera.zed_camera_tilt', default_value='60.0'),
-        # Topics config
+        DeclareLaunchArgument('camera.zed_camera_tilt', default_value='65.0'),
+        # Topics config 65
         DeclareLaunchArgument('topics.image_subscription', default_value='/zed/zed_node/left/image_rect_color'),
         DeclareLaunchArgument('topics.occupancy_grid', default_value='/test_occ'),
         # Sizes config

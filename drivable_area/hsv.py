@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import os
 import json
+from ultralytics import YOLO
 
 class hsv:
     def __init__(self, video_path):
@@ -11,22 +12,22 @@ class hsv:
         self.image = None
         self.final = None
         self.video_path = video_path
+        self.model = YOLO("/home/umarv/ros2_ws/src/cv-stack/drivable_area/utils/laneswithcontrast.pt")
         self.load_hsv_values()
         
     def load_hsv_values(self):
         if os.path.exists('hsv_values.json'):
             with open('hsv_values.json', 'r') as file:
                 all_hsv_values = json.load(file)
-                self.hsv_filters = all_hsv_values.get(self.video_path, {})
+                self.hsv_filters = all_hsv_values.get(str(self.video_path), {})
         else:
             # print("Matt put it in the wrong spot")
             # Initialize with an empty filter map if the JSON file doesn't exist
             self.hsv_filters["white"] = {
                 'h_upper': 179, 'h_lower': 0,
-                's_upper': 70, 's_lower': 0,
-                'v_upper': 255, 'v_lower': 189
+                's_upper': 9, 's_lower': 0,
+                'v_upper': 255, 'v_lower': 216
             }
-
             # print(self.hsv_filters)
 
 
@@ -35,7 +36,7 @@ class hsv:
         if os.path.exists('hsv_values.json'):
             with open('hsv_values.json', 'r') as file:
                 all_hsv_values = json.load(file)
-        all_hsv_values[self.video_path] = self.hsv_filters
+        all_hsv_values[str(self.video_path)] = self.hsv_filters
         with open('hsv_values.json', 'w') as file:
             json.dump(all_hsv_values, file, indent=4)
     # def load_hsv_values(self):
@@ -218,6 +219,17 @@ class hsv:
         cap.release()
         cv2.destroyAllWindows()
         self.save_hsv_values()
+
+    def get_lane_lines_YOLO(self):
+        # Get the driveable area of one frame and return the inverted mask
+        results = self.model.predict(self.image, conf=0.7)[0]
+        laneline_mask = np.zeros((self.image.shape[0], self.image.shape[1]), dtype=np.uint8)
+        if(results.masks is not None):
+            for i in range(len(results.masks.xy)):
+                    segment = results.masks.xy[i]
+                    segment_array = np.array([segment], dtype=np.int32)
+                    cv2.fillPoly(laneline_mask, [segment_array], color=(255, 0, 0))
+        return laneline_mask
         
     def update_mask(self):
         combined_mask = None
@@ -236,6 +248,9 @@ class hsv:
                 if cv2.contourArea(cnt) > min_area:
                     cv2.drawContours(final, [cnt], -1, 255, thickness=cv2.FILLED)
 
+            if filter_name == "white":
+                lane_line_mask = self.get_lane_lines_YOLO()
+                final = cv2.bitwise_or(final, lane_line_mask)
             # Combine masks
             if combined_mask is None:
                 combined_mask = final

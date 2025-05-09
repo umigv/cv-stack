@@ -121,9 +121,10 @@ class DrivableArea(Node):
             self.listener_callback,
             10)
         
+        #/zed/zed_node/pose
         self.pose_subscription = self.create_subscription(
             PoseStamped,
-            '/zed/zed_node/pose',
+            'odom',
             self.pose_callback,
             10
         )
@@ -170,18 +171,18 @@ class DrivableArea(Node):
                 combined[-lane_extension:, i] = 255
         
         # YOLO pothole detection
-        r_hole = self.hole_model.predict(frame, conf=self.config["yolo"]["hole_confidence"], device='cpu')[0]
+        # r_hole = self.hole_model.predict(frame, conf=self.config["yolo"]["hole_confidence"], device='cpu')[0]
         
-        if r_hole.boxes is not None:
-            for segment in r_hole.boxes.xyxyn:
-                x_min, y_min, x_max, y_max = segment
-                vertices = np.array([
-                    [x_min * image_width, y_min * image_height],
-                    [x_max * image_width, y_min * image_height],
-                    [x_max * image_width, y_max * image_height],
-                    [x_min * image_width, y_max * image_height]
-                ], dtype=np.int32)
-                cv2.fillPoly(combined, [vertices], color=255)
+        # if r_hole.boxes is not None:
+        #     for segment in r_hole.boxes.xyxyn:
+        #         x_min, y_min, x_max, y_max = segment
+        #         vertices = np.array([
+        #             [x_min * image_width, y_min * image_height],
+        #             [x_max * image_width, y_min * image_height],
+        #             [x_max * image_width, y_max * image_height],
+        #             [x_min * image_width, y_max * image_height]
+        #         ], dtype=np.int32)
+        #         cv2.fillPoly(combined, [vertices], color=255)
         
         return combined
     
@@ -258,7 +259,7 @@ class DrivableArea(Node):
         grid = OccupancyGrid()
         grid.header = Header()
         grid.header.stamp = self.get_clock().now().to_msg()
-        grid.header.frame_id = 'map'
+        grid.header.frame_id = 'odom'
         grid.info = MapMetaData()
         grid.info.resolution = self.desired_size
         grid.info.width = array.shape[1]
@@ -268,10 +269,13 @@ class DrivableArea(Node):
         # grid.info.origin.position.y = self.config["grid"]["position"]["y"]
         # grid.info.origin.position.z = self.config["grid"]["position"]["z"]
 
-        grid.info.origin.position.x = self.robot_position_x
-        grid.info.origin.position.y = self.robot_position_y
-        # grid.info.origin.position.z = self.robot_position_z
-        # grid.info.origin.orientation = self.robot_orientation
+        grid.info.origin.position.x = -14.0 * grid.info.resolution
+        grid.info.origin.position.y = -76 * grid.info.resolution
+        grid.info.origin.position.z = 0.0
+        grid.info.origin.orientation.x = 0.0
+        grid.info.origin.orientation.y = 0.0
+        grid.info.origin.orientation.z = 0.0
+        grid.info.origin.orientation.w = 1.0
 
         grid.data = Array('b', array.ravel().astype(np.int8))
 
