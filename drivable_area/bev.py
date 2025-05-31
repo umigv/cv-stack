@@ -20,6 +20,20 @@ class CameraProperties(object):
         if self.bird_src_quad is None:
             self.bird_src_quad = np.array([[0, rows - 1], [columns - 1, rows - 1], [0, 0], [columns - 1, 0]], dtype = 'float32')
         return self.bird_src_quad
+    
+    def get_best_waypoint(self, waypoints):
+        best_waypoint = None
+        best_dist = float('inf')
+
+        for pt in waypoints:
+            height = pt[1]
+            if height <= self.maxHeight:
+                dist = self.maxHeight - height
+                if dist < best_dist:
+                    best_dist = dist
+                    best_waypoint = pt
+
+        return best_waypoint
 
     def dst_quad(self, rows, columns, min_angle, max_angle):
         if self.bird_dst_quad is None:
