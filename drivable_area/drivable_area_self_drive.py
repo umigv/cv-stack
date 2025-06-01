@@ -13,11 +13,16 @@ from skimage.draw import polygon
 from ultralytics import YOLO
 from drivable_area.occ_grid import occ_grid
 from drivable_area.hsv import hsv
+from left_turn import left_turn
+from right_turn import right_turn
 
 UNKNOWN = -1
 OCCUPIED = 100
 FREE = 0
 ROBOT = 2
+
+left_turn = True
+righ_turn  = False
 
 class DrivableArea(Node):
     def __init__(self):
@@ -154,6 +159,8 @@ class DrivableArea(Node):
         self.occ_obj = occ_grid(0, self.config["yolo"]["lane_model_path"]) #occ_grid(video_path, yolo_path)
         self.hsv_obj = hsv(0)
 
+        self.waypoints = None
+
     def get_occupancy_grid(self, frame):
         combined, dict = self.hsv_obj.get_mask(frame)
         lane_search_height = self.config["yolo"]["lane_search_height"]
@@ -161,7 +168,19 @@ class DrivableArea(Node):
         for i in range(combined.shape[1]):
             if np.any(combined[-lane_search_height:, i]):
                 combined[-lane_extension:, i] = 255
-        return combined
+
+        # TODO: init left turn object, masks, etc. 
+        # remember to update bools
+        left_obj = left_turn()
+        left_turn = True
+        right_turn = False
+        left_obj.yellow_mask = dict["yellow"]
+        left_obj.white_mask = dict["white"]
+        left_obj.find_left_most_lane()
+        waypoints = left_obj.find_center_of_lane()
+
+        # return combined occupancy grid and waypoints obtained from turn?
+        return combined, waypoints
     
     def pose_callback(self, msg):
         # Extract the position and orientation from the pose message
@@ -192,9 +211,15 @@ class DrivableArea(Node):
         return False
         
     def write_to_temp(self):
+        # write 0 to stop, else 1
         #write a 0 to the temp file reference this: https://github.com/umigv/embedded_ros_marvin/blob/main/sdr_estop/estop_epy_block_3.py
         #use the self.file_path in the embedded file
         #use lines 37-40
+        #TODO
+        with open(self.file_path, 'w') as f:
+            f.write('0')
+            f.flush()
+            os.fsync(f.fileno())
         return None
         
     def listener_callback(self, msg):
@@ -205,8 +230,9 @@ class DrivableArea(Node):
         # Resize the image to 720x1280
         frame = cv2.resize(frame, (self.config["image"]["width"], self.config["image"]["height"]))
 
-        # Get the occupancy grid
-        occupancy_grid_display = self.get_occupancy_grid(frame)
+        # TODO: changed to return waypoints too
+        # Get the occupancy grid and waypoints from turn 
+        occupancy_grid_display, waypoints = self.get_occupancy_grid(frame)
 
         # Get the bird's eye view of the occupancy grid
         transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occupancy_grid_display, self.zed)
@@ -232,6 +258,10 @@ class DrivableArea(Node):
         # Concatenate the negative border to the occupancy grid
         transformed_image = np.concatenate((add_neg, transformed_image), axis=1)
         
+        #TODO: Multiply best waypoint by ZED matrix
+        multiplied_waypoint = self.zed.get_best_waypoint(waypoints) * self.zed.matrix
+
+
         # Convert the occupancy grid to a binary grid with in-place boolean assignments
         binary_grid = np.full(transformed_image.shape, -1, dtype=transformed_image.dtype)
         binary_grid[transformed_image == 255] = OCCUPIED
