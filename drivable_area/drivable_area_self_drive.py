@@ -21,8 +21,8 @@ OCCUPIED = 100
 FREE = 0
 ROBOT = 2
 
-left_turn = True
-righ_turn  = False
+is_left_turn = True
+is_right_turn  = False
 
 class DrivableArea(Node):
     def __init__(self):
@@ -172,8 +172,8 @@ class DrivableArea(Node):
         # TODO: init left turn object, masks, etc. 
         # remember to update bools
         left_obj = left_turn()
-        left_turn = True
-        right_turn = False
+        is_left_turn = True
+        is_right_turn = False
         left_obj.yellow_mask = dict["yellow"]
         left_obj.white_mask = dict["white"]
         left_obj.find_left_most_lane()
