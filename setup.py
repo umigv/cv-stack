@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'drivable_area_test = drivable_area.drivable_area:main',
+            'drivable_area_mag = drivable_area.test_sensor:main',
             'drivable_area_test_publisher = drivable_area.drivable_area_test_publisher:main',
             'drivable_area_test_subscriber = drivable_area.drivable_area_test_subscriber:main',
             'drivable_area_mqtt = drivable_area.driveable_area_mqtt:main',
