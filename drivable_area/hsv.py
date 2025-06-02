@@ -11,10 +11,12 @@ class hsv:
         self.setup = False
         self.image = None
         self.final = None
+        self.barrel = True
         self.video_path = video_path
         self.barrel_mask = None
         self.barrel_model =  YOLO("/home/umarv/ros2_ws/src/cv-stack/drivable_area/utils/obstacles.pt")
         self.model = YOLO("/home/umarv/ros2_ws/src/cv-stack/drivable_area/utils/laneswithcontrast.pt")
+        self.barrel_model = YOLO("/home/umarv/ros2_ws/src/cv-stack/drivable_area/utils/obstacles.pt")
         self.load_hsv_values()
         
     def load_hsv_values(self):
@@ -26,9 +28,9 @@ class hsv:
             # print("Matt put it in the wrong spot")
             # Initialize with an empty filter map if the JSON file doesn't exist
             self.hsv_filters["white"] = {
-                'h_upper': 179, 'h_lower': 0,
-                's_upper': 9, 's_lower': 0,
-                'v_upper': 255, 'v_lower': 216
+                'h_upper': 29, 'h_lower': 0,
+                's_upper': 51, 's_lower': 0,
+                'v_upper': 255, 'v_lower': 137
             }
             # print(self.hsv_filters)
 
@@ -107,6 +109,18 @@ class hsv:
     #             cv2.drawContours(self.final, [cnt], -1, 255, thickness=cv2.FILLED)
                 
     #     return self.final
+
+    def get_barrels_YOLO(self):
+        # Get the driveable area of one frame and return the inverted mask
+        results = self.barrel_model.predict(self.image, conf=0.7)[0]
+        barrel_mask = np.zeros((self.image.shape[0], self.image.shape[1]), dtype=np.uint8)
+        if(results.masks is not None):
+            for i in range(len(results.masks.xy)):
+                    segment = results.masks.xy[i]
+                    segment_array = np.array([segment], dtype=np.int32)
+                    cv2.fillPoly(barrel_mask, [segment_array], color=(255, 0, 0))
+        return barrel_mask
+
     def clear_filter(self, filter_name):
         if os.path.exists('hsv_values.json'):
             with open('hsv_values.json', 'r') as file:
@@ -239,6 +253,10 @@ class hsv:
                 combined_mask = cv2.bitwise_or(combined_mask, final)
 
             masks[filter_name] = final
+
+        if self.barrel:
+            barrels = self.get_barrels_YOLO()
+            combined_mask = cv2.bitwise_or(combined_mask, barrels)
         # print(combined_mask.shape)
         
         barrels = self.get_barrels_YOLO()

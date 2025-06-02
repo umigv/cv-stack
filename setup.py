@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'drivable_area_head = drivable_area.test_sensor:main',
             'drivable_area_test = drivable_area.drivable_area:main',
+            'drivable_area_mag = drivable_area.test_sensor:main',
             'drivable_area_self = drivable_area.drivable_area_self_drive:main',
             'drivable_area_test_publisher = drivable_area.drivable_area_test_publisher:main',
             'drivable_area_test_subscriber = drivable_area.drivable_area_test_subscriber:main',
