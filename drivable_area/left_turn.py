@@ -148,7 +148,7 @@ class left_turn:
             #right line
             self.draw_trapazoid()
             point1 = (0, int(0.5*self.height))
-            point2 = (int(0.125*self.width), self.height)
+            point2 = (int(1), self.height)
             cv2.line(self.final, (int(0.8 * self.width), 0), (self.width, self.height), 255, 10)
             #left line
             cv2.line(self.final, point1, point2, 255, 10)
