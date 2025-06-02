@@ -19,7 +19,7 @@ from map_interfaces.srv import InflationGrid
 from infra_interfaces.action import NavigateToGoal
 from infra_interfaces.msg import CellCoordinateMsg
 from rclpy.action import ActionClient
-from std_srvs.srv import Empty
+
 
 import os
 
@@ -127,13 +127,6 @@ class DrivableArea(Node):
 
         self.image_width = self.config["image"]["width"]
         self.image_height = self.config["image"]["height"]
-
-        self.client = self.create_client(Empty, '/clear_odom')
-        while not self.client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('Waiting for clear service...')
-
-
-
         self.subscription = self.create_subscription(
             Image,
             self.config["topics"]["image_subscription"],
@@ -180,16 +173,9 @@ class DrivableArea(Node):
         self.response_waypoint = None
         self.processing_navigation = False
         self.barrel_midpoint = None
+        self.barrel_boxes
 
-    def clear_ser(self):
-            self.get_logger().info('CLEARING.')
 
-            self.future = self.client.call_async(Empty.Request())
-            # rclpy.spin_until_future_complete(self, self.future)
-            if self.future.result() is not None:
-                self.get_logger().info('clear call successful.')
-            else:
-                self.get_logger().error('clear call failed.')
     def get_occupancy_grid(self, frame):
         combined, dict = self.hsv_obj.get_mask(frame)
         lane_search_height = self.config["yolo"]["lane_search_height"]
@@ -200,16 +186,24 @@ class DrivableArea(Node):
 
         # TODO: init left turn object, masks, etc. 
         # remember to update bools
-        left_obj = leftTurn()
-        is_left_turn = True
-        is_right_turn = False
-        left_obj.yellow_mask = dict["yellow"]
-        left_obj.final = combined
-        left_obj.white_mask = dict["white"]
-        print("WHITE MASK", left_obj.white_mask.shape)
-        left_obj.state_machine()
-        waypoints = left_obj.find_center_of_lane()
-        self.barrel_midpoint = left_obj.midpoint
+        self.barrel_boxes = self.hsv_obj.barrel_boxes
+        for segment in self.barrel_boxes:
+            x_min, y_min, x_max, y_max = segment
+            vertices = np.array([
+                [x_min * self.width, y_min * self.height], #top-left
+                [x_max * self.width, y_min * self.height], #top right
+                [x_max * self.width, y_max * self.height], #bottom-right
+                [x_min * self.width, y_max * self.height] #bottom left
+            ], dtype=np.int32)
+            
+            if(y_min * self.height > self.height // 2):
+                # this might be a cone that is close to us so see if its in the midele
+                midpoint = (x_max * self.width) - (x_min * self.width)
+                if(midpoint > self.width // 4 and midpoint < (self.width - (self.width//4))):
+                    self.in_state_4 = True
+                    self.barrel_midpoint = midpoint
+            else:
+                self.barrel_midpoint = None
         
         new = np.array([self.barrel_midpoint[0], self.barrel_midpoint[1], 1])
         multiplied_waypoint = self.zed.matrix @ new
@@ -220,7 +214,7 @@ class DrivableArea(Node):
         
         self.barrel_midpoint = (tx, ty)
         # return combined occupancy grid and waypoints obtained from turn?
-        return combined, waypoints
+        return combined
     
     def pose_callback(self, msg):
         # Extract the position and orientation from the pose message
@@ -259,8 +253,7 @@ class DrivableArea(Node):
         # write 0 to stop, else 1
         #write a 0 to the temp file reference this: https://github.com/umigv/embedded_ros_marvin/blob/main/sdr_estop/estop_epy_block_3.py
         #use the self.file_path in the embedded file
-        #use li 37-40   def clear_ser(self):
-        
+        #use lines 37-40
         #TODO
         with open(self.file_path, 'w') as f:
             f.write('0')
@@ -276,19 +269,15 @@ class DrivableArea(Node):
         # Resize the image to 720x1280
         frame = cv2.resize(frame, (self.config["image"]["width"], self.config["image"]["height"]))
 
-        # print(f"awaiting_navigate_response: {self.processing_navigation}")
+        print(f"awaiting_navigate_response: {self.processing_navigation}")
         if self.processing_navigation:
             return
         
         self.processing_navigation = True
 
-        self.clear_ser()        # rclpy.spin_until_future_complete(self, self.future)
-
-
-
         # TODO: changed to return waypoints too
         # Get the occupancy grid and waypoints from turn 
-        occupancy_grid_display, waypoints = self.get_occupancy_grid(frame)
+        occupancy_grid_display = self.get_occupancy_grid(frame)
 
         # Get the bird's eye view of the occupancy grid
         transformed_image, bottomLeft, bottomRight, topRight, topLeft, maxWidth, maxHeight = getBirdView(occupancy_grid_display, self.zed)
@@ -315,16 +304,9 @@ class DrivableArea(Node):
         transformed_image = np.concatenate((add_neg, transformed_image), axis=1)
         
         #TODO: Multiply best waypoint by ZED matrix
-        best_waypoint = self.zed.get_best_waypoint(waypoints)
-        new = np.array([best_waypoint[0], best_waypoint[1], 1])
-        multiplied_waypoint = self.zed.matrix @ new
-        multiplied_waypoint /= multiplied_waypoint[2]
-        tx, ty = multiplied_waypoint[0], multiplied_waypoint[1]
-        tx *= self.scale_factor - 1
-        ty *= self.scale_factor + 26 -1
+        
 
-        self.response_waypoint = (tx, ty)
-        print(f"Best waypoint: {tx}, {ty}")
+        self.response_waypoint = (77, 52)
 
         # Convert the occupancy grid to a binary grid with in-place boolean assignments
         binary_grid = np.full(transformed_image.shape, -1, dtype=transformed_image.dtype)
