@@ -13,8 +13,15 @@ from skimage.draw import polygon
 from ultralytics import YOLO
 from drivable_area.occ_grid import occ_grid
 from drivable_area.hsv import hsv
-from left_turn import left_turn
-from right_turn import right_turn
+from drivable_area.left_turn import left_turn
+from drivable_area.right_turn import right_turn
+from map_interfaces.srv import InflationGrid
+from infra_interfaces.action import NavigateToGoal
+from infra_interfaces.msg import CellCoordinateMsg
+from rclpy.action import ActionClient
+
+
+import os
 
 UNKNOWN = -1
 OCCUPIED = 100
@@ -160,6 +167,12 @@ class DrivableArea(Node):
         self.hsv_obj = hsv(0)
 
         self.waypoints = None
+        self.response = None
+        self.inflation_client = self.create_client(InflationGrid, 'inflation_grid_service')
+        self.navigate_client = ActionClient(self, NavigateToGoal, 'navigate_to_goal')
+        self.response_waypoint = None
+        self.processing_navigation = False
+
 
     def get_occupancy_grid(self, frame):
         combined, dict = self.hsv_obj.get_mask(frame)
@@ -175,7 +188,9 @@ class DrivableArea(Node):
         is_left_turn = True
         is_right_turn = False
         left_obj.yellow_mask = dict["yellow"]
+        left_obj.final = combined
         left_obj.white_mask = dict["white"]
+        print("WHITE MASK", left_obj.white_mask.shape)
         left_obj.find_left_most_lane()
         waypoints = left_obj.find_center_of_lane()
 
@@ -195,7 +210,7 @@ class DrivableArea(Node):
         self.robot_orientation = orientation
         
     def stop(self, occ_grid):
-        r_width, r_height = occ_grid.shape
+        r_height, r_width = occ_grid.shape
         center_width = r_width // 2
 
         dist_px = round(3 * .3048 / 0.05) # ~18 pixels AKA 3 feet from bottom
@@ -230,6 +245,12 @@ class DrivableArea(Node):
         # Resize the image to 720x1280
         frame = cv2.resize(frame, (self.config["image"]["width"], self.config["image"]["height"]))
 
+        print(f"awaiting_navigate_response: {self.processing_navigation}")
+        if self.processing_navigation:
+            return
+        
+        self.processing_navigation = True
+
         # TODO: changed to return waypoints too
         # Get the occupancy grid and waypoints from turn 
         occupancy_grid_display, waypoints = self.get_occupancy_grid(frame)
@@ -259,8 +280,16 @@ class DrivableArea(Node):
         transformed_image = np.concatenate((add_neg, transformed_image), axis=1)
         
         #TODO: Multiply best waypoint by ZED matrix
-        multiplied_waypoint = self.zed.get_best_waypoint(waypoints) * self.zed.matrix
+        best_waypoint = self.zed.get_best_waypoint(waypoints)
+        new = np.array([best_waypoint[0], best_waypoint[1], 1])
+        multiplied_waypoint = self.zed.matrix @ new
+        multiplied_waypoint /= multiplied_waypoint[2]
+        tx, ty = multiplied_waypoint[0], multiplied_waypoint[1]
+        tx *= self.scale_factor
+        ty *= self.scale_factor
 
+        self.response_waypoint = (tx, ty)
+        print(f"Best waypoint: {tx}, {ty}")
 
         # Convert the occupancy grid to a binary grid with in-place boolean assignments
         binary_grid = np.full(transformed_image.shape, -1, dtype=transformed_image.dtype)
@@ -270,6 +299,7 @@ class DrivableArea(Node):
 
         new_size = (int(transformed_image.shape[1] * self.scale_factor), int(transformed_image.shape[0] * self.scale_factor))
         resized_image = cv2.resize(transformed_image, new_size, interpolation = cv2.INTER_NEAREST_EXACT)
+        print(f"Resized image shape: {resized_image.shape}")
 
 
         should_stop = self.stop(resized_image)
@@ -290,6 +320,7 @@ class DrivableArea(Node):
         combined_arr = np.flipud(combined_arr)
         
         self.send_occupancy_grid(combined_arr)
+        self.send_inflation_request()
 
     def send_occupancy_grid(self, array):
         grid = OccupancyGrid()
@@ -318,6 +349,83 @@ class DrivableArea(Node):
         self.publisher.publish(grid)
         self.get_logger().info('Publishing occupancy grid')
 
+    def send_inflation_request(self):
+        while not self.inflation_client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Waiting for inflation_grid_service...')
+
+        self.get_logger().info("Sending inflation_grid_service request")
+        self.req = InflationGrid.Request()
+        future = self.inflation_client.call_async(self.req)
+        future.add_done_callback(self.inflation_response_callback)
+
+    def inflation_response_callback(self, future):
+        try:
+            self.response = future.result().occupancy_grid
+            self.get_logger().info('Received inflation grid response')
+            self.send_navigate_goal((14, 76))
+            
+        except Exception as e:
+            self.get_logger().error(f'Exception while calling service: {e}')
+
+    def send_navigate_goal(self, starting_pose):
+        """ Sends a goal to the NavigateToGoal action and waits for the result or feedback condition """
+
+        self.starting_pose = starting_pose[::-1]  # Reverse the order for the action server
+        self.response_waypoint = self.response_waypoint[::-1]
+        if not self.navigate_client.wait_for_server(timeout_sec=5.0):
+            self.get_logger().error("NavigateToGoal action server not available!")
+            return
+
+        goal_msg = NavigateToGoal.Goal()
+        goal_msg.costmap = self.response  # Use the inflation grid response as the costmap
+        goal_msg.start = CellCoordinateMsg(x=int(starting_pose[0]), y=int(starting_pose[1]))
+        
+        goal_msg.goal = CellCoordinateMsg(x=int(self.response_waypoint[0]), y=int(self.response_waypoint[1]))
+
+        self.get_logger().info(f"Sending goal: start={starting_pose}, goal={self.response_waypoint}")
+
+        send_goal_future = self.navigate_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+
+        send_goal_future.add_done_callback(self.navigate_to_goal_acceptance_callback)
+    
+    def feedback_callback(self, feedback_msg):
+        """ Process feedback from the action server """
+        # pose = feedback_msg.feedback.distance_from_start
+        # self.get_logger().info(f"Feedback received: Pose({pose.position.x}, {pose.position.y})")
+
+        # # Stop if the pose is within 1.0 of the starting pose
+        # if abs(pose.position.x - self.starting_pose[0]) <= 1.0 and abs(pose.position.y - self.starting_pose[1]) <= 1.0:
+        #     self.get_logger().info("Robot is within 1.0 of starting position, stopping...")
+        #     self.navigate_client.cancel_goal_async(self.goal_handle)
+
+    def navigate_to_goal_acceptance_callback(self, future):
+        try:
+            goal_handle = future.result()
+            
+            if not goal_handle.accepted:
+                self.get_logger().error('navigate_to_goal action goal rejected')
+                self.processing_navigation = False
+                return
+                
+            self.get_logger().info('navigate_to_goal action goal accepted')
+            future = goal_handle.get_result_async()
+
+            future.add_done_callback(self.navigate_to_goal_result_callback)
+        except Exception as e:
+            self.get_logger().error(f'Exception in navigate_to_goal_acceptance_callback: {e}')
+            self.processing_navigation = False
+
+    def navigate_to_goal_result_callback(self, future):
+        try:
+            navigation_result = future.result().result.success
+            if navigation_result:
+                self.get_logger().info('Navigation to goal succeeded, continuing to next goal')
+            else:
+                self.get_logger().info('Navigation to goal failed, retrying')
+        except Exception as e:
+            self.get_logger().error(f'Exception in navigate_to_goal_result_callback: {e}')
+
+        self.processing_navigation = False
 
 def main(args=None):
     rclpy.init(args=args)

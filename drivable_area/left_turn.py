@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from hsv import hsv
+from drivable_area.hsv import hsv
 
 
 class left_turn:
@@ -113,6 +113,8 @@ class left_turn:
     
     
     def find_left_most_lane(self):
+        print("WHITE MASK SHAPE", self.white_mask.shape)
+        print("FINAL SHAPE", self.final.shape)
         assert(self.white_mask.shape == self.final.shape)
         contours, _ = cv2.findContours(self.yellow_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         min_area = 200 # Adjust based on noise size

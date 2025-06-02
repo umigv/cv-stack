@@ -39,7 +39,7 @@ def generate_launch_description():
 
         Node(
             package='drivable_area',
-            executable='drivable_area_test',
+            executable='drivable_area_self',
             name='drivable_area',
             output='screen',
             parameters=[{
