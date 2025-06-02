@@ -65,11 +65,11 @@ class left_turn:
         
         self.past_stop_line()
         
-        if(self.done == False):
-            self.last_diff_y = self.find_left_most_lane()
-        else:
-            self.draw_trapazoid()
-            self.centroid = (self.width//2, 40)
+        # if(self.done == False):
+        self.last_diff_y = self.find_left_most_lane()
+        # else:
+        #     self.draw_trapazoid()
+        #     self.centroid = (self.width//2, 40)
         self.find_center_of_lane()
         cv2.imshow("mask", self.final)
         final_bgr = cv2.cvtColor(self.final, cv2.COLOR_GRAY2BGR)
@@ -120,6 +120,16 @@ class left_turn:
         min_area = 200 # Adjust based on noise size
         # hsv_lanes = np.zeros_like(self.mask) # New occupancy grid that is blank
         self.height, self.width = self.white_mask.shape
+        
+        if len(contours) != 0:
+            self.done = False
+        
+        
+        if self.done:
+            self.draw_trapazoid()
+            self.centroid = (self.width//2, 40)
+            return -3
+        
         
         best_cnt = None
         max_y = 0
