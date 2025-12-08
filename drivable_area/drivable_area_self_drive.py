@@ -20,7 +20,7 @@ from map_interfaces.srv import InflationGrid
 from infra_interfaces.action import NavigateToGoal
 from infra_interfaces.msg import CellCoordinateMsg
 from rclpy.action import ActionClient
-
+from std_srvs.srv import Empty
 
 import os
 
@@ -128,6 +128,13 @@ class DrivableArea(Node):
 
         self.image_width = self.config["image"]["width"]
         self.image_height = self.config["image"]["height"]
+
+        self.client = self.create_client(Empty, '/clear_odom')
+        while not self.client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Waiting for clear service...')
+
+
+
         self.subscription = self.create_subscription(
             Image,
             self.config["topics"]["image_subscription"],
@@ -184,7 +191,15 @@ class DrivableArea(Node):
         self.processing_navigation = False
         self.barrel_midpoint = None
 
+    def clear_ser(self):
+            self.get_logger().info('CLEARING.')
 
+            self.future = self.client.call_async(Empty.Request())
+            # rclpy.spin_until_future_complete(self, self.future)
+            if self.future.result() is not None:
+                self.get_logger().info('clear call successful.')
+            else:
+                self.get_logger().error('clear call failed.')
     def get_occupancy_grid(self, frame):
         combined, dict = self.hsv_obj.get_mask(frame)
         lane_search_height = self.config["yolo"]["lane_search_height"]
@@ -254,7 +269,8 @@ class DrivableArea(Node):
         # write 0 to stop, else 1
         #write a 0 to the temp file reference this: https://github.com/umigv/embedded_ros_marvin/blob/main/sdr_estop/estop_epy_block_3.py
         #use the self.file_path in the embedded file
-        #use lines 37-40
+        #use li 37-40   def clear_ser(self):
+        
         #TODO
         with open(self.file_path, 'w') as f:
             f.write('0')
@@ -270,11 +286,15 @@ class DrivableArea(Node):
         # Resize the image to 720x1280
         frame = cv2.resize(frame, (self.config["image"]["width"], self.config["image"]["height"]))
 
-        print(f"awaiting_navigate_response: {self.processing_navigation}")
+        # print(f"awaiting_navigate_response: {self.processing_navigation}")
         if self.processing_navigation:
             return
         
         self.processing_navigation = True
+
+        self.clear_ser()        # rclpy.spin_until_future_complete(self, self.future)
+
+
 
         # TODO: changed to return waypoints too
         # Get the occupancy grid and waypoints from turn 
