@@ -12,6 +12,7 @@ from drivable_area.bev import CameraProperties, getBirdView
 from skimage.draw import polygon
 from ultralytics import YOLO
 from drivable_area.occ_grid import occ_grid
+from geometry_msgs.msg import Point
 from drivable_area.hsv import hsv
 from drivable_area.left_turn_new import leftTurn
 # from drivable_area.right_turn import right_turn
@@ -134,13 +135,22 @@ class DrivableArea(Node):
             10)
         
         #/zed/zed_node/pose
-        self.pose_subscription = self.create_subscription(
-            PoseStamped,
-            'odom',
-            self.pose_callback,
+        # self.pose_subscription = self.create_subscription(
+        #     PoseStamped,
+        #     'odom',
+        #     self.pose_callback,
+        #     10
+        # )
+        
+        self.publisher_ = self.create_publisher(Point, 'external_goal', 10)
+        
+        self.inflation_layer = self.create_subscription(
+            OccupancyGrid,
+            '/inflated_occupancy_grid',
+            self.inflation_callback,
             10
         )
-        self.pose_subscription  # Prevent unused variable warning
+        self.grid_time = None
 
         self.robot_position_x = float(0)
         self.robot_position_y = float(0)
@@ -317,10 +327,10 @@ class DrivableArea(Node):
         print(f"Resized image shape: {resized_image.shape}")
 
 
-        should_stop = self.stop(resized_image)
+        # should_stop = self.stop(resized_image)
 
-        if should_stop:
-            self.write_to_temp()
+        # if should_stop:
+        #     self.write_to_temp()
             
             
             
@@ -341,6 +351,7 @@ class DrivableArea(Node):
         grid = OccupancyGrid()
         grid.header = Header()
         grid.header.stamp = self.get_clock().now().to_msg()
+        self.grid_time = grid.header.stamp
         grid.header.frame_id = 'odom'
         grid.info = MapMetaData()
         grid.info.resolution = self.desired_size
@@ -364,24 +375,6 @@ class DrivableArea(Node):
         self.publisher.publish(grid)
         self.get_logger().info('Publishing occupancy grid')
 
-    def send_inflation_request(self):
-        while not self.inflation_client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('Waiting for inflation_grid_service...')
-
-        self.get_logger().info("Sending inflation_grid_service request")
-        self.req = InflationGrid.Request()
-        future = self.inflation_client.call_async(self.req)
-        future.add_done_callback(self.inflation_response_callback)
-
-    def inflation_response_callback(self, future):
-        try:
-            self.response = future.result().occupancy_grid
-            self.get_logger().info('Received inflation grid response')
-            self.send_navigate_goal((14, 76))
-            
-        except Exception as e:
-            self.get_logger().error(f'Exception while calling service: {e}')
-
     def send_navigate_goal(self, starting_pose):
         """ Sends a goal to the NavigateToGoal action and waits for the result or feedback condition """
 
@@ -391,18 +384,33 @@ class DrivableArea(Node):
             self.get_logger().error("NavigateToGoal action server not available!")
             return
 
-        goal_msg = NavigateToGoal.Goal()
-        goal_msg.costmap = self.response  # Use the inflation grid response as the costmap
-        goal_msg.start = CellCoordinateMsg(x=int(starting_pose[0]), y=int(starting_pose[1]))
+        goal_msg =  Point(x=float(self.response_waypoint[0]), y=float(self.response_waypoint[1]))
+        # goal_msg.costmap = self.response  # Use the inflation grid response as the costmap
+        # goal_msg.start = Point(x=float(starting_pose[0]), y=float(starting_pose[1]))
         
-        goal_msg.goal = CellCoordinateMsg(x=int(self.response_waypoint[0]), y=int(self.response_waypoint[1]))
+        # goal_msg.goal = Point(x=float(self.response_waypoint[0]), y=float(self.response_waypoint[1]))
 
-        self.get_logger().info(f"Sending goal: start={starting_pose}, goal={self.response_waypoint}")
+        # self.get_logger().info(f"Sending goal: start={starting_pose}, goal={self.response_waypoint}")
+        
+        # need to publish goal_msg to /external_goal subscriber
+        self.publisher_.publish(goal_msg)
 
-        send_goal_future = self.navigate_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
+        # send_goal_future = self.navigate_client.send_goal_async(goal_msg, feedback_callback=self.feedback_callback)
 
-        send_goal_future.add_done_callback(self.navigate_to_goal_acceptance_callback)
-    
+        # send_goal_future.add_done_callback(self.navigate_to_goal_acceptance_callback)
+        
+    def inflation_callback(self, inf_grid):
+        if self.grid_time != inf_grid.header.stamp:
+            return -1
+        else:
+            self.response = inf_grid
+            self.get_logger().info('Received inflation grid via topic')
+            self.send_navigate_goal((14, 76)) #robot position
+        
+        
+        
+        
+            
     def feedback_callback(self, feedback_msg):
         """ Process feedback from the action server """
         # pose = feedback_msg.feedback.distance_from_start
